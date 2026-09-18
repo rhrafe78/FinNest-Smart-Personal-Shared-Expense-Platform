@@ -219,9 +219,14 @@ export const RegisterPage = () => {
         ) : (
           /* STEP 2: Real Database OTP Verification */
           <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-xl space-y-6">
-            <div className="p-3 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-900 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-              <span>We've sent a 6-digit verification code to your email inbox! Please check your Inbox (or Spam folder).</span>
+            <div className="p-3 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-900 space-y-1">
+              <div className="flex items-center gap-2 font-semibold">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                <span>Verification code sent to {registeredEmail}</span>
+              </div>
+              <p className="text-[11px] text-emerald-600/90 dark:text-emerald-400/90 pl-6">
+                Please check your Inbox (or Spam folder). If using the Gmail mobile app, swipe down to refresh.
+              </p>
             </div>
 
             <OTPInput
