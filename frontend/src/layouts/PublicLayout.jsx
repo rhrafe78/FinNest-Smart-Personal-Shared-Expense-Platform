@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, ArrowRight, ShieldCheck, Heart, Sparkles, Mail, ArrowUp, Globe } from 'lucide-react';
+import { Sun, Moon, Menu, X, ArrowRight, ShieldCheck, Heart, Sparkles, Mail, Globe } from 'lucide-react';
 import { Logo } from '../components/ui/Logo';
 import { Button } from '../components/ui/Button';
 import { useTheme } from '../context/ThemeContext';
@@ -258,7 +258,7 @@ export const PublicLayout = () => {
             </div>
           </div>
 
-          {/* Bottom Bar with Tech Badges & Scroll to Top */}
+          {/* Bottom Bar with Copyright */}
           <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
               <span>&copy; {new Date().getFullYear()} FINNEST Inc.</span>
@@ -268,26 +268,6 @@ export const PublicLayout = () => {
               <span className="flex items-center gap-1">
                 Engineered with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for modern finance.
               </span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-400 dark:text-slate-500">
-                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">React 19</span>
-                <span>+</span>
-                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">Django</span>
-                <span>+</span>
-                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">PostgreSQL</span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all ml-2"
-                title="Back to top"
-                aria-label="Back to top"
-              >
-                <ArrowUp className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </div>
