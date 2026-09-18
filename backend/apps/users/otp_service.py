@@ -124,8 +124,7 @@ class OTPService:
 
         if has_smtp_credentials:
             try:
-                import socket
-                socket.setdefaulttimeout(4)
+                # Primary method: Django EmailMultiAlternatives (port 587 TLS)
                 from django.core.mail import EmailMultiAlternatives
                 msg = EmailMultiAlternatives(
                     subject=subject,
@@ -143,9 +142,29 @@ class OTPService:
                 msg.attach_alternative(html_message, "text/html")
                 msg.send(fail_silently=False)
                 email_sent = True
-            except Exception as e:
-                email_error = str(e)
-                email_sent = False
+            except Exception as e_primary:
+                # Secondary fallback: smtplib SSL on port 465 (handles networks where 587 is blocked)
+                try:
+                    import smtplib
+                    from email.mime.multipart import MIMEMultipart
+                    from email.mime.text import MIMEText
+
+                    fallback_msg = MIMEMultipart('alternative')
+                    fallback_msg['Subject'] = subject
+                    fallback_msg['From'] = from_email
+                    fallback_msg['To'] = email
+                    fallback_msg.attach(MIMEText(plain_message, 'plain'))
+                    fallback_msg.attach(MIMEText(html_message, 'html'))
+
+                    server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=12)
+                    server.login(str(settings.EMAIL_HOST_USER).strip(), str(settings.EMAIL_HOST_PASSWORD).strip())
+                    server.sendmail(str(settings.EMAIL_HOST_USER).strip(), [email], fallback_msg.as_string())
+                    server.quit()
+                    email_sent = True
+                    email_error = None
+                except Exception as e_fallback:
+                    email_error = f"Primary (587): {e_primary} | Fallback (465): {e_fallback}"
+                    email_sent = False
         else:
             email_sent = False
             email_error = "SMTP credentials not configured."
