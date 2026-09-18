@@ -23,9 +23,9 @@ export const PublicLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 bg-mesh-light dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
       {/* Ambient colorful backdrop glow in light mode */}
-      <div className="absolute top-0 left-1/4 w-[650px] h-[500px] bg-gradient-to-br from-indigo-400/20 via-purple-300/20 to-transparent blur-[130px] pointer-events-none -z-10 rounded-full" />
-      <div className="absolute top-[30%] right-5 w-[600px] h-[500px] bg-gradient-to-bl from-emerald-400/20 via-teal-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full" />
-      <div className="absolute top-[65%] left-5 w-[600px] h-[450px] bg-gradient-to-tr from-amber-300/20 via-rose-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-0 left-1/4 w-[650px] h-[500px] bg-gradient-to-br from-indigo-400/20 via-purple-300/20 to-transparent blur-[130px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
+      <div className="absolute top-[30%] right-5 w-[600px] h-[500px] bg-gradient-to-bl from-emerald-400/20 via-teal-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
+      <div className="absolute top-[65%] left-5 w-[600px] h-[450px] bg-gradient-to-tr from-amber-300/20 via-rose-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#0a0e17]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
