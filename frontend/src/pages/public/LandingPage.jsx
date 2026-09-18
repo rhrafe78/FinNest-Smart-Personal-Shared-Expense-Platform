@@ -125,48 +125,56 @@ export const LandingPage = () => {
 
             {/* Dashboard Inner Grid Preview */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="p-4.5 rounded-2xl bg-gradient-to-br from-indigo-100/90 via-indigo-50/50 to-white dark:bg-slate-900/60 border-2 border-indigo-200 dark:border-indigo-900/50 shadow-md shadow-indigo-500/5 hover:border-indigo-400 transition-all">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-indigo-900 dark:text-slate-400 font-extrabold uppercase tracking-wider">Total Balance</span>
-                  <span className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-sm font-bold">৳</span>
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-100/90 via-indigo-50/50 to-white dark:bg-slate-900/60 border-2 border-indigo-200 dark:border-indigo-900/50 shadow-md shadow-indigo-500/5 hover:border-indigo-400 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[11px] text-indigo-950 dark:text-slate-300 font-extrabold uppercase tracking-wider">Total Balance</span>
+                    <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs shadow-sm font-bold shrink-0">৳</span>
+                  </div>
+                  <div className="text-2xl font-black text-indigo-950 dark:text-white tracking-tight">৳ 127,000.00</div>
                 </div>
-                <div className="text-2xl font-black mt-1 text-indigo-950 dark:text-white">৳ 127,000.00</div>
-                <div className="text-xs text-emerald-700 dark:text-emerald-400 font-extrabold mt-1.5 flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5" /> +14.2% this month
+                <div className="text-xs text-emerald-700 dark:text-emerald-400 font-extrabold mt-3 flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5 shrink-0" /> +14.2% this month
                 </div>
               </div>
 
-              <div className="p-4.5 rounded-2xl bg-gradient-to-br from-emerald-100/90 via-emerald-50/50 to-white dark:bg-slate-900/60 border-2 border-emerald-200 dark:border-emerald-900/50 shadow-md shadow-emerald-500/5 hover:border-emerald-400 transition-all">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-emerald-900 dark:text-slate-400 font-extrabold uppercase tracking-wider">Green View Mess Net</span>
-                  <span className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs shadow-sm font-bold">
-                    <Building className="w-4 h-4" />
-                  </span>
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-100/90 via-emerald-50/50 to-white dark:bg-slate-900/60 border-2 border-emerald-200 dark:border-emerald-900/50 shadow-md shadow-emerald-500/5 hover:border-emerald-400 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[11px] text-emerald-950 dark:text-slate-300 font-extrabold uppercase tracking-wider">Green View Mess Net</span>
+                    <span className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                      <Building className="w-4 h-4" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight">+৳ 16,800.00</div>
                 </div>
-                <div className="text-2xl font-black mt-1 text-emerald-700 dark:text-emerald-400">+৳ 16,800.00</div>
-                <div className="text-xs text-emerald-900 dark:text-slate-300 mt-1.5 font-bold">3 roommates owe you</div>
+                <div className="text-xs text-emerald-900 dark:text-slate-300 mt-3 font-bold">3 roommates owe you</div>
               </div>
 
-              <div className="p-4.5 rounded-2xl bg-gradient-to-br from-amber-100/90 via-amber-50/50 to-white dark:bg-slate-900/60 border-2 border-amber-200 dark:border-amber-900/50 shadow-md shadow-amber-500/5 hover:border-amber-400 transition-all">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-amber-900 dark:text-slate-400 font-extrabold uppercase tracking-wider">Food Budget Used</span>
-                  <span className="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs shadow-sm font-bold">
-                    <PieChart className="w-4 h-4" />
-                  </span>
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-100/90 via-amber-50/50 to-white dark:bg-slate-900/60 border-2 border-amber-200 dark:border-amber-900/50 shadow-md shadow-amber-500/5 hover:border-amber-400 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[11px] text-amber-950 dark:text-slate-300 font-extrabold uppercase tracking-wider">Food Budget Used</span>
+                    <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                      <PieChart className="w-4 h-4" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-amber-950 dark:text-white tracking-tight">57.5%</div>
                 </div>
-                <div className="text-2xl font-black mt-1 text-amber-950 dark:text-white">57.5%</div>
-                <div className="text-xs text-amber-800 dark:text-brand-400 font-extrabold mt-1.5">৳5,100 left of ৳12,000</div>
+                <div className="text-xs text-amber-900 dark:text-brand-400 font-extrabold mt-3">৳5,100 left of ৳12,000</div>
               </div>
 
-              <div className="p-4.5 rounded-2xl bg-gradient-to-br from-sky-100/90 via-sky-50/50 to-white dark:bg-slate-900/60 border-2 border-sky-200 dark:border-sky-900/50 shadow-md shadow-sky-500/5 hover:border-sky-400 transition-all">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-sky-900 dark:text-slate-400 font-extrabold uppercase tracking-wider">MacBook Pro Goal</span>
-                  <span className="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center text-xs shadow-sm font-bold">
-                    <Sparkles className="w-4 h-4" />
-                  </span>
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-100/90 via-sky-50/50 to-white dark:bg-slate-900/60 border-2 border-sky-200 dark:border-sky-900/50 shadow-md shadow-sky-500/5 hover:border-sky-400 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[11px] text-sky-950 dark:text-slate-300 font-extrabold uppercase tracking-wider">MacBook Pro Goal</span>
+                    <span className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-sky-800 dark:text-cyan-400 tracking-tight">69.6%</div>
                 </div>
-                <div className="text-2xl font-black mt-1 text-sky-800 dark:text-cyan-400">69.6%</div>
-                <div className="text-xs text-sky-900 dark:text-slate-300 mt-1.5 font-bold">৳195,000 of ৳280,000</div>
+                <div className="text-xs text-sky-950 dark:text-slate-300 mt-3 font-bold">৳195,000 of ৳280,000</div>
               </div>
             </div>
 
