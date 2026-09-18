@@ -21,13 +21,9 @@ export const PublicLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/50 bg-mesh-light dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
-      {/* Ambient colorful backdrop glow in light mode */}
-      <div className="absolute top-0 left-1/4 w-[650px] h-[500px] bg-gradient-to-br from-indigo-400/20 via-purple-300/20 to-transparent blur-[130px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
-      <div className="absolute top-[30%] right-5 w-[600px] h-[500px] bg-gradient-to-bl from-emerald-400/20 via-teal-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
-      <div className="absolute top-[65%] left-5 w-[600px] h-[450px] bg-gradient-to-tr from-amber-300/20 via-rose-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full dark:opacity-10" />
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white relative">
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#0a0e17]/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0a0e17]/95">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Logo size="md" />
 
@@ -139,13 +135,9 @@ export const PublicLayout = () => {
         <Outlet />
       </main>
 
-      {/* Ultra-Premium SaaS Footer */}
-      <footer className="relative border-t border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-[#070b13]/90 backdrop-blur-xl pt-16 pb-10 overflow-hidden">
-        {/* Subtle top glow line */}
-        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-brand-500/5 dark:bg-brand-500/10 blur-3xl rounded-full pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Ultra-Clean SaaS Footer */}
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#070b13] pt-16 pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Main Footer Links Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-10 pb-12">
             {/* Brand column */}
