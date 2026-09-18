@@ -22,6 +22,19 @@
   }
 }
 
+/* Modern subtle mesh grid for colorful light background */
+.bg-mesh-light {
+  background-image: 
+    radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+    radial-gradient(at 90% 15%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
+    radial-gradient(at 80% 85%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+    radial-gradient(at 20% 85%, rgba(14, 165, 233, 0.10) 0px, transparent 50%);
+}
+.dark .bg-mesh-light {
+  background-image: none;
+}
+
 /* Custom sleek scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

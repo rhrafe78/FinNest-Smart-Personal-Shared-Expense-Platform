@@ -21,7 +21,11 @@ export const PublicLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50/50 bg-mesh-light dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
+      {/* Ambient colorful backdrop glow in light mode */}
+      <div className="absolute top-0 left-1/4 w-[650px] h-[500px] bg-gradient-to-br from-indigo-400/20 via-purple-300/20 to-transparent blur-[130px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-[30%] right-5 w-[600px] h-[500px] bg-gradient-to-bl from-emerald-400/20 via-teal-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-[65%] left-5 w-[600px] h-[450px] bg-gradient-to-tr from-amber-300/20 via-rose-300/15 to-transparent blur-[140px] pointer-events-none -z-10 rounded-full" />
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#0a0e17]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -142,34 +146,6 @@ export const PublicLayout = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-brand-500/5 dark:bg-brand-500/10 blur-3xl rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Sleek Mini CTA Banner */}
-          <div className="mb-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-50 to-brand-50/40 dark:from-[#0d1424] dark:to-[#0f172a] border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-1.5 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100/80 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 text-xs font-semibold mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-                <span>Smart Financial Intelligence</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Take full control of your finances today.
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-                Join thousands of individuals, roommates, and mess managers tracking expenses with zero friction.
-              </p>
-            </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <Link to="/register">
-                <Button variant="primary" size="md" className="font-bold shadow-lg shadow-brand-500/20 px-6">
-                  Get Started Free
-                </Button>
-              </Link>
-              <Link to="/how-it-works">
-                <Button variant="outline" size="md" className="font-semibold">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </div>
-
           {/* Main Footer Links Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-10 pb-12">
             {/* Brand column */}
