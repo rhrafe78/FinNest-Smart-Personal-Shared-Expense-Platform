@@ -418,25 +418,6 @@ export const LandingPage = () => {
           ))}
         </div>
       </section>
-
-      {/* 7. FINAL CALL TO ACTION */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="rounded-3xl bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-700 text-white p-8 sm:p-14 text-center space-y-6 shadow-2xl shadow-brand-500/20">
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Take complete control of your finances today.
-          </h2>
-          <p className="text-brand-100 text-sm sm:text-base max-w-xl mx-auto">
-            Join thousands of users tracking wealth and sharing mess expenses with zero stress and zero mathematical errors.
-          </p>
-          <div className="pt-2">
-            <Link to="/register">
-              <Button variant="secondary" size="lg" className="bg-white text-brand-700 hover:bg-slate-100 font-bold px-8 py-3.5">
-                Create Your Free Account Now
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
