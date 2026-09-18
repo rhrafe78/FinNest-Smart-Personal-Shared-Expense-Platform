@@ -39,7 +39,7 @@ export const ContactPage = () => {
               <input
                 type="text"
                 required
-                placeholder="Rafi Ahmed"
+                placeholder="John Doe"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
@@ -51,7 +51,7 @@ export const ContactPage = () => {
               <input
                 type="email"
                 required
-                placeholder="rafi@finnest.com"
+                placeholder="john@example.com"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>

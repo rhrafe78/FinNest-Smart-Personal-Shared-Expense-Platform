@@ -155,7 +155,7 @@ export const LoginPage = () => {
                   <input
                     type="email"
                     required
-                    placeholder="rafi@finnest.com"
+                    placeholder="john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -216,7 +216,7 @@ export const LoginPage = () => {
                       <input
                         type="email"
                         required
-                        placeholder="e.g. rafi@finnest.com"
+                        placeholder="e.g. john@example.com"
                         value={otpEmail}
                         onChange={(e) => setOtpEmail(e.target.value)}
                         className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
