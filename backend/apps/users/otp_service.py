@@ -6,51 +6,6 @@ from django.conf import settings
 from .models import EmailOTP
 
 
-def _async_send_email(subject, plain_message, html_message, from_email, sender_email, email, purpose, code):
-    """Dispatches OTP email directly via Port 465 SSL with clean headers for instant inbox delivery."""
-    try:
-        import smtplib
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
-        from email.utils import formatdate, make_msgid
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = from_email
-        msg['To'] = email
-        msg['Reply-To'] = sender_email
-        msg['Date'] = formatdate(localtime=True)
-        msg['Message-ID'] = make_msgid(domain='gmail.com')
-
-        msg.attach(MIMEText(plain_message, 'plain', 'utf-8'))
-        msg.attach(MIMEText(html_message, 'html', 'utf-8'))
-
-        host_user = str(settings.EMAIL_HOST_USER).strip()
-        host_pwd = str(settings.EMAIL_HOST_PASSWORD).strip()
-
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10)
-        server.login(host_user, host_pwd)
-        server.sendmail(host_user, [email], msg.as_string())
-        server.quit()
-        print(f"\n[FAST OTP EMAIL SUCCESS (Port 465 SSL)] To: {email} | Code: {code}\n")
-    except Exception as e_ssl:
-        # Fallback to standard Django mail
-        try:
-            from django.core.mail import EmailMultiAlternatives
-            fallback_msg = EmailMultiAlternatives(
-                subject=subject,
-                body=plain_message,
-                from_email=from_email,
-                to=[email],
-                reply_to=[sender_email]
-            )
-            fallback_msg.attach_alternative(html_message, "text/html")
-            fallback_msg.send(fail_silently=False)
-            print(f"\n[FAST OTP EMAIL FALLBACK (Port 587)] To: {email} | Code: {code}\n")
-        except Exception as e_fallback:
-            print(f"\n[FAST OTP EMAIL FAILED] To: {email} | SSL: {e_ssl} | 587: {e_fallback}\n")
-
-
 class OTPService:
     EXPIRY_MINUTES = 10
     MAX_ATTEMPTS = 5
@@ -159,6 +114,9 @@ class OTPService:
 </html>
 """
 
+        email_sent = False
+        email_error = None
+
         has_smtp_credentials = bool(
             getattr(settings, 'EMAIL_HOST_USER', None) and 
             getattr(settings, 'EMAIL_HOST_PASSWORD', None) and
@@ -167,22 +125,69 @@ class OTPService:
         )
 
         if has_smtp_credentials:
-            threading.Thread(
-                target=_async_send_email,
-                args=(subject, plain_message, html_message, from_email, sender_email, email, purpose, code),
-                daemon=False
-            ).start()
-            email_sent = True
+            try:
+                import smtplib
+                from email.mime.multipart import MIMEMultipart
+                from email.mime.text import MIMEText
+                from email.utils import formatdate, make_msgid
+
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = subject
+                msg['From'] = from_email
+                msg['To'] = email
+                msg['Reply-To'] = sender_email
+                msg['Date'] = formatdate(localtime=True)
+                msg['Message-ID'] = make_msgid(domain='gmail.com')
+
+                msg.attach(MIMEText(plain_message, 'plain', 'utf-8'))
+                msg.attach(MIMEText(html_message, 'html', 'utf-8'))
+
+                host_user = str(settings.EMAIL_HOST_USER).strip()
+                host_pwd = str(settings.EMAIL_HOST_PASSWORD).strip()
+
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=6)
+                server.login(host_user, host_pwd)
+                server.sendmail(host_user, [email], msg.as_string())
+                try:
+                    server.quit()
+                except Exception:
+                    pass
+                email_sent = True
+                print(f"[DIRECT OTP EMAIL SUCCESS (Port 465 SSL)] To: {email} | Code: {code}")
+            except Exception as e_ssl:
+                print(f"[DIRECT OTP EMAIL ERROR (Port 465)] {e_ssl}")
+                # Fallback to standard Django mail
+                try:
+                    from django.core.mail import EmailMultiAlternatives
+                    fallback_msg = EmailMultiAlternatives(
+                        subject=subject,
+                        body=plain_message,
+                        from_email=from_email,
+                        to=[email],
+                        reply_to=[sender_email]
+                    )
+                    fallback_msg.attach_alternative(html_message, "text/html")
+                    fallback_msg.send(fail_silently=False)
+                    email_sent = True
+                    print(f"[DIRECT OTP EMAIL FALLBACK (Port 587)] To: {email} | Code: {code}")
+                except Exception as e_fallback:
+                    email_error = f"SSL: {e_ssl} | Fallback: {e_fallback}"
+                    email_sent = False
+                    print(f"[DIRECT OTP EMAIL FAILED] To: {email} | Error: {email_error}")
         else:
             email_sent = False
+            email_error = "SMTP credentials not configured."
 
-        # Instant terminal feedback
+        # Terminal feedback
         print(f"\n==========================================")
-        print(f"[FINNEST REAL OTP DISPATCHED ASYNC]")
+        print(f"[FINNEST REAL OTP DISPATCH COMPLETE]")
         print(f"To: {email}")
         print(f"Purpose: {purpose}")
         print(f"Code: {code} (Expires in {cls.EXPIRY_MINUTES}m)")
         print(f"SMTP Configured: {has_smtp_credentials}")
+        print(f"Email Sent Successfully: {email_sent}")
+        if email_error:
+            print(f"Email Error Details: {email_error}")
         print(f"==========================================\n")
 
         return {
@@ -190,7 +195,7 @@ class OTPService:
             'purpose': purpose,
             'expires_in_minutes': cls.EXPIRY_MINUTES,
             'email_sent': email_sent,
-            'email_error': None,
+            'email_error': email_error if settings.DEBUG else None,
         }
 
     @classmethod
