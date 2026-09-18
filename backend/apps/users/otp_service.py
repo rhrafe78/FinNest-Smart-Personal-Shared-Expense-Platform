@@ -168,7 +168,6 @@ class OTPService:
             'expires_in_minutes': cls.EXPIRY_MINUTES,
             'email_sent': email_sent,
             'email_error': email_error if settings.DEBUG else None,
-            'dev_preview_code': code if (settings.DEBUG or not email_sent) else None
         }
 
     @classmethod

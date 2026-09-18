@@ -25,7 +25,6 @@ export const RegisterPage = () => {
   // Step 2: OTP Verification
   const [step, setStep] = useState(1); // 1 = Form, 2 = OTP
   const [registeredEmail, setRegisteredEmail] = useState('');
-  const [devPreviewCode, setDevPreviewCode] = useState(null);
   const [emailSent, setEmailSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
@@ -37,7 +36,6 @@ export const RegisterPage = () => {
     try {
       const res = await api.post('/auth/register/', formData);
       setRegisteredEmail(res.data.email || formData.email);
-      setDevPreviewCode(res.data.dev_preview_code || null);
       setEmailSent(Boolean(res.data.email_sent));
       setStep(2);
     } catch (err) {
@@ -79,13 +77,10 @@ export const RegisterPage = () => {
 
   const handleResendOTP = async () => {
     try {
-      const res = await api.post('/auth/send-otp/', {
+      await api.post('/auth/send-otp/', {
         email: registeredEmail,
         purpose: 'register',
       });
-      if (res.data.dev_preview_code) {
-        setDevPreviewCode(res.data.dev_preview_code);
-      }
     } catch (err) {
       setOtpError('Failed to resend OTP. Please try again.');
     }
@@ -228,19 +223,6 @@ export const RegisterPage = () => {
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
               <span>We've sent a 6-digit verification code to your email inbox! Please check your Inbox (or Spam folder).</span>
             </div>
-
-            {devPreviewCode && (
-              <div className="p-3 text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 rounded-xl border border-amber-200 dark:border-amber-900 flex items-center justify-between">
-                <span>Your Verification Code: <strong className="font-mono text-sm font-bold tracking-widest ml-1">{devPreviewCode}</strong></span>
-                <button
-                  type="button"
-                  onClick={() => handleVerifyOTP(devPreviewCode)}
-                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all"
-                >
-                  Auto Fill &amp; Verify
-                </button>
-              </div>
-            )}
 
             <OTPInput
               length={6}

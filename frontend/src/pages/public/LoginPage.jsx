@@ -24,7 +24,6 @@ export const LoginPage = () => {
   const [otpEmail, setOtpEmail] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
-  const [devPreviewCode, setDevPreviewCode] = useState(null);
   const [emailSent, setEmailSent] = useState(false);
 
   const handlePasswordLogin = async (e) => {
@@ -50,7 +49,6 @@ export const LoginPage = () => {
         email: otpEmail,
         purpose: 'login',
       });
-      setDevPreviewCode(res.data.dev_preview_code || null);
       setEmailSent(Boolean(res.data.email_sent));
       setOtpStep(2);
     } catch (err) {
@@ -75,13 +73,10 @@ export const LoginPage = () => {
 
   const handleResendLoginOTP = async () => {
     try {
-      const res = await api.post('/auth/send-otp/', {
+      await api.post('/auth/send-otp/', {
         email: otpEmail,
         purpose: 'login',
       });
-      if (res.data.dev_preview_code) {
-        setDevPreviewCode(res.data.dev_preview_code);
-      }
     } catch (err) {
       setOtpError('Failed to resend OTP. Please try again.');
     }
@@ -250,19 +245,6 @@ export const LoginPage = () => {
                     <span className="text-emerald-500 font-bold">✓</span>
                     <span>We've sent a 6-digit verification code to your email inbox! Please check your Inbox (or Spam folder).</span>
                   </div>
-
-                  {devPreviewCode && (
-                    <div className="p-3 text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 rounded-xl border border-amber-200 dark:border-amber-900 flex items-center justify-between">
-                      <span>Login OTP Code: <strong className="font-mono text-sm font-bold tracking-widest ml-1">{devPreviewCode}</strong></span>
-                      <button
-                        type="button"
-                        onClick={() => handleVerifyLoginOTP(devPreviewCode)}
-                        className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all"
-                      >
-                        Auto Fill &amp; Sign In
-                      </button>
-                    </div>
-                  )}
 
                   <OTPInput
                     length={6}

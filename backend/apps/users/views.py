@@ -34,7 +34,6 @@ class RegisterView(APIView):
                 'email': user.email,
                 'is_verified': False,
                 'email_sent': otp_info.get('email_sent', False),
-                'dev_preview_code': otp_info.get('dev_preview_code'),
                 'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
             }, status=status.HTTP_201_CREATED)
 
@@ -47,7 +46,6 @@ class RegisterView(APIView):
                 'email': user.email,
                 'is_verified': False,
                 'email_sent': otp_info.get('email_sent', False),
-                'dev_preview_code': otp_info.get('dev_preview_code'),
                 'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +74,6 @@ class SendOTPView(APIView):
                 'purpose': purpose,
                 'email_sent': res.get('email_sent', False),
                 'email_error': res.get('email_error'),
-                'dev_preview_code': res.get('dev_preview_code'),
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

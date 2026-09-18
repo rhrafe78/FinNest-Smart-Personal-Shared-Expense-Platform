@@ -8,7 +8,6 @@ export const OTPInput = ({
   onResend,
   isLoading = false,
   error = '',
-  devPreviewCode = null,
 }) => {
   const [digits, setDigits] = useState(Array(length).fill(''));
   const [timeLeft, setTimeLeft] = useState(60);
