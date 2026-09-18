@@ -89,7 +89,7 @@ export const LandingPage = () => {
                 </Link>
                 <Link to="/login">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-7 py-3.5">
-                    Explore Live Demo Accounts
+                    Sign In to Account
                   </Button>
                 </Link>
               </>

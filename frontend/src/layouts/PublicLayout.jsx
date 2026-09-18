@@ -138,7 +138,7 @@ export const PublicLayout = () => {
       {/* Professional SaaS Footer */}
       <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#070a10] pt-14 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div className="md:col-span-2 space-y-4">
               <Logo size="lg" />
               <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
@@ -174,22 +174,6 @@ export const PublicLayout = () => {
                 <li><Link to="/contact" className="hover:text-brand-600 dark:hover:text-brand-400">Contact Support</Link></li>
                 <li><Link to="/how-it-works" className="hover:text-brand-600 dark:hover:text-brand-400">Security & Privacy</Link></li>
               </ul>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-4">
-                Demo Accounts
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
-                Preloaded with Green View Mess & transactions:
-              </p>
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-mono bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                <div>rafi@finnest.com (Owner)</div>
-                <div>rahim@finnest.com (Admin)</div>
-                <div>karim@finnest.com (Member)</div>
-                <div>hasan@finnest.com (Member)</div>
-                <div className="text-[11px] text-brand-600 dark:text-brand-400 pt-1">Password: password123</div>
-              </div>
             </div>
           </div>
 
