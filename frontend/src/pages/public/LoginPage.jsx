@@ -232,7 +232,9 @@ export const LoginPage = () => {
                     className="w-full font-bold mt-2"
                     isLoading={otpLoading}
                   >
-                    Send 6-Digit OTP <ArrowRight className="w-4 h-4 ml-1" />
+                    <span className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                      Send 6-Digit OTP <ArrowRight className="w-4 h-4 shrink-0" />
+                    </span>
                   </Button>
                 </form>
               ) : (

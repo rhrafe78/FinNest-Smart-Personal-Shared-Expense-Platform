@@ -43,7 +43,7 @@ export const Button = ({
       ) : (
         Icon && <Icon className="w-4 h-4 text-current" />
       )}
-      <span>{children}</span>
+      <span className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">{children}</span>
     </button>
   );
 };
