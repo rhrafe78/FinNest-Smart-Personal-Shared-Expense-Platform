@@ -258,16 +258,37 @@ export const PublicLayout = () => {
             </div>
           </div>
 
-          {/* Bottom Bar with Copyright */}
-          <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
-              <span>&copy; {new Date().getFullYear()} FINNEST Inc.</span>
-              <span>&bull;</span>
+          {/* Elegant SaaS Bottom Bar */}
+          <div className="pt-8 mt-2 border-t border-slate-200/90 dark:border-slate-800/90 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+            {/* Left: Brand note & Copyright */}
+            <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start text-slate-600 dark:text-slate-400">
+              <span className="font-bold text-slate-800 dark:text-slate-200">&copy; {new Date().getFullYear()} FINNEST Inc.</span>
+              <span className="text-slate-300 dark:text-slate-700">&bull;</span>
               <span>All rights reserved.</span>
-              <span className="hidden sm:inline">&bull;</span>
-              <span className="flex items-center gap-1">
-                Engineered with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for modern finance.
+              <span className="hidden sm:inline text-slate-300 dark:text-slate-700">&bull;</span>
+              <span className="flex items-center gap-1.5">
+                Crafted with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for modern personal & shared finance.
               </span>
+            </div>
+
+            {/* Right: Essential Legal Links & Live Status Pill */}
+            <div className="flex items-center gap-3.5 flex-wrap justify-center md:justify-end text-slate-500 dark:text-slate-400">
+              <Link to="/about" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors font-medium">
+                Privacy
+              </Link>
+              <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+              <Link to="/about" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors font-medium">
+                Terms
+              </Link>
+              <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+              <Link to="/contact" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors font-medium">
+                Support
+              </Link>
+              <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Systems Active</span>
+              </div>
             </div>
           </div>
         </div>
