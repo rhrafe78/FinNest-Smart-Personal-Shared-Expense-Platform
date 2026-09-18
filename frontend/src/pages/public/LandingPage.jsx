@@ -53,42 +53,42 @@ export const LandingPage = () => {
     <div className="space-y-24 pb-20 overflow-hidden">
       {/* 1. HERO SECTION */}
       <section className="relative pt-12 sm:pt-20 lg:pt-28">
-        {/* Ambient background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-brand-500/10 blur-[130px] -z-10 rounded-full pointer-events-none" />
+        {/* Ambient multi-color background glow for rich vibrancy */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[450px] bg-gradient-to-tr from-brand-400/25 via-purple-400/20 to-emerald-400/25 blur-[130px] -z-10 rounded-full pointer-events-none" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-7">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-200 dark:border-brand-900 bg-brand-50/80 dark:bg-brand-950/60 text-xs font-semibold text-brand-700 dark:text-brand-300 animate-in fade-in slide-in-from-bottom-2">
-            <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-brand-900 bg-indigo-50/90 dark:bg-brand-950/60 text-xs font-bold text-indigo-800 dark:text-brand-300 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+            <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
             <span>Smart Personal & Shared Expense Management Platform</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
             Manage your money.<br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-500 to-emerald-500">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-600 to-emerald-600 dark:from-brand-500 dark:via-indigo-400 dark:to-emerald-400">
               Share expenses. Stay in control.
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
             The dual-engine fintech SaaS built for individuals, bachelor messes, roommates, and families. Track wealth, budget accurately, and simplify group debt effortlessly.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             {isAuthenticated ? (
               <Link to="/app/dashboard">
-                <Button variant="primary" size="lg" className="w-full sm:w-auto text-base px-8 py-3.5 shadow-xl shadow-brand-500/25">
+                <Button variant="primary" size="lg" className="w-full sm:w-auto text-base px-8 py-3.5 shadow-xl shadow-brand-500/25 font-bold">
                   Launch FinNest Dashboard <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/register">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto text-base px-8 py-3.5 shadow-xl shadow-brand-500/25">
+                  <Button variant="primary" size="lg" className="w-full sm:w-auto text-base px-8 py-3.5 shadow-xl shadow-brand-500/25 font-bold">
                     Start Managing Your Money <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/login">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-7 py-3.5">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-7 py-3.5 font-bold border-slate-300 text-slate-800 hover:bg-slate-100">
                     Sign In to Account
                   </Button>
                 </Link>
@@ -96,52 +96,52 @@ export const LandingPage = () => {
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-6 pt-4 text-xs font-medium text-slate-500 dark:text-slate-400">
-            <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-500" /> No credit card required</span>
-            <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-amber-500" /> Bank-grade Decimal Math</span>
-            <span className="flex items-center gap-1.5"><Users2 className="w-4 h-4 text-brand-500" /> Unlimited Households</span>
+          <div className="flex items-center justify-center gap-6 pt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-600" /> No credit card required</span>
+            <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-amber-600" /> Bank-grade Decimal Math</span>
+            <span className="flex items-center gap-1.5"><Users2 className="w-4 h-4 text-brand-600" /> Unlimited Households</span>
           </div>
         </div>
 
         {/* 2. PRODUCT DASHBOARD PREVIEW MOCKUP */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-14 sm:mt-20">
-          <div className="relative rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-[#111827]/80 backdrop-blur-xl p-3 sm:p-5 shadow-2xl shadow-slate-900/10 dark:shadow-brand-950/40">
+          <div className="relative rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#111827]/80 backdrop-blur-xl p-3 sm:p-5 shadow-2xl shadow-indigo-500/10 dark:shadow-brand-950/40">
             {/* Top Mock Window Bar */}
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800/80 text-xs text-slate-400">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800/80 text-xs text-slate-500 font-medium">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-rose-400 inline-block" />
-                <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-                <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
-                <span className="ml-2 font-mono text-[11px] text-slate-500">finnest.app/dashboard</span>
+                <span className="w-3 h-3 rounded-full bg-rose-400 inline-block shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-amber-400 inline-block shadow-sm" />
+                <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block shadow-sm" />
+                <span className="ml-2 font-mono text-[11px] text-slate-600 dark:text-slate-400 font-bold">finnest.app/dashboard</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[11px] bg-emerald-50 dark:bg-emerald-950 text-emerald-600 px-2 py-0.5 rounded-full font-semibold">
-                  Live System Connected
+                <span className="text-[11px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">
+                  ● Live System Connected
                 </span>
               </div>
             </div>
 
             {/* Dashboard Inner Grid Preview */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800">
-                <div className="text-xs text-slate-500 font-semibold uppercase">Total Balance</div>
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/80 via-white to-white dark:bg-slate-900/60 border border-indigo-100 dark:border-slate-800 shadow-sm">
+                <div className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase">Total Balance</div>
                 <div className="text-2xl font-extrabold mt-1 text-slate-900 dark:text-white">৳ 127,000.00</div>
-                <div className="text-xs text-emerald-600 font-medium mt-1">+14.2% this month</div>
+                <div className="text-xs text-emerald-700 dark:text-emerald-400 font-bold mt-1">+14.2% this month</div>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800">
-                <div className="text-xs text-slate-500 font-semibold uppercase">Green View Mess Net</div>
-                <div className="text-2xl font-extrabold mt-1 text-emerald-600 dark:text-emerald-400">+৳ 16,800.00</div>
-                <div className="text-xs text-slate-400 mt-1">3 roommates owe you</div>
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/80 via-white to-white dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-800 shadow-sm">
+                <div className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase">Green View Mess Net</div>
+                <div className="text-2xl font-extrabold mt-1 text-emerald-700 dark:text-emerald-400">+৳ 16,800.00</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">3 roommates owe you</div>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800">
-                <div className="text-xs text-slate-500 font-semibold uppercase">Food Budget Used</div>
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-white to-white dark:bg-slate-900/60 border border-amber-100 dark:border-slate-800 shadow-sm">
+                <div className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase">Food Budget Used</div>
                 <div className="text-2xl font-extrabold mt-1 text-slate-900 dark:text-white">57.5%</div>
-                <div className="text-xs text-brand-600 font-medium mt-1">৳5,100 left of ৳12,000</div>
+                <div className="text-xs text-amber-700 dark:text-brand-400 font-bold mt-1">৳5,100 left of ৳12,000</div>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800">
-                <div className="text-xs text-slate-500 font-semibold uppercase">MacBook Pro Goal</div>
-                <div className="text-2xl font-extrabold mt-1 text-cyan-600 dark:text-cyan-400">69.6%</div>
-                <div className="text-xs text-slate-400 mt-1">৳195,000 of ৳280,000</div>
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-sky-50/80 via-white to-white dark:bg-slate-900/60 border border-sky-100 dark:border-slate-800 shadow-sm">
+                <div className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase">MacBook Pro Goal</div>
+                <div className="text-2xl font-extrabold mt-1 text-sky-700 dark:text-cyan-400">69.6%</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">৳195,000 of ৳280,000</div>
               </div>
             </div>
 
@@ -191,68 +191,68 @@ export const LandingPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Personal Finance Column */}
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] p-8 space-y-6 shadow-sm hover:shadow-xl transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <div className="rounded-3xl border border-emerald-200/90 dark:border-slate-800 bg-gradient-to-b from-emerald-50/50 via-white to-white dark:bg-[#111827] p-8 space-y-6 shadow-lg shadow-emerald-500/5 hover:shadow-xl transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-400 flex items-center justify-center shadow-sm">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">
                 1. Personal Finance Mastery
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-sm text-slate-700 dark:text-slate-400 leading-relaxed font-normal">
                 Take complete ownership of your personal financial journey with real-time income tracking, category budgets, visual savings goals, and receipt archives.
               </p>
             </div>
 
-            <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+            <ul className="space-y-3 text-sm text-slate-800 dark:text-slate-300 font-medium">
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Multi-source income & expense ledger with custom tags</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Smart budget alert triggers when nearing 80% limit</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Savings goal projections with monthly recommended saving rate</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Automated AI-like financial insights comparing monthly trends</span>
               </li>
             </ul>
           </div>
 
           {/* Shared Mess / Family Column */}
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] p-8 space-y-6 shadow-sm hover:shadow-xl transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/70 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+          <div className="rounded-3xl border border-indigo-200/90 dark:border-slate-800 bg-gradient-to-b from-indigo-50/50 via-white to-white dark:bg-[#111827] p-8 space-y-6 shadow-lg shadow-indigo-500/5 hover:shadow-xl transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-brand-950/70 dark:text-brand-400 flex items-center justify-center shadow-sm">
               <Building className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">
                 2. Shared Mess & Household System
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-sm text-slate-700 dark:text-slate-400 leading-relaxed font-normal">
                 Designed specifically for bachelor messes, student apartments, roommates, and joint families to track utilities, rent, groceries, and debt settlements.
               </p>
             </div>
 
-            <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+            <ul className="space-y-3 text-sm text-slate-800 dark:text-slate-300 font-medium">
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-brand-500" />
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>4 splitting methods: Equal, Exact, Percentage, and Shares</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-brand-500" />
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>Smart Debt Simplification: minimizes transaction hops</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-brand-500" />
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>Recurring bills management with due date reminder tags</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-brand-500" />
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0" />
                 <span>Collaborative grocery list with 1-click expense conversion</span>
               </li>
             </ul>
@@ -261,19 +261,19 @@ export const LandingPage = () => {
       </section>
 
       {/* 4. EXPENSE SPLITTING EXPLAINER */}
-      <section className="bg-slate-100/60 dark:bg-[#070a10] py-20 border-y border-slate-200 dark:border-slate-800/80">
+      <section className="bg-gradient-to-b from-indigo-50/50 via-white to-slate-50/70 dark:bg-[#070a10] py-20 border-y border-indigo-100/70 dark:border-slate-800/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center space-y-3 mb-12">
             <Badge variant="brand">Splitting Engine</Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
               Every expense scenario, covered with precision.
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-sm max-w-xl mx-auto">
+            <p className="text-slate-700 dark:text-slate-400 text-sm max-w-xl mx-auto font-medium">
               Whether you are splitting flat rent equally or dividing grocery based on room share or meal consumption:
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-md">
+          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-indigo-100 dark:border-slate-800 p-6 sm:p-8 shadow-xl shadow-indigo-500/5">
             {/* Split Method Tabs */}
             <div className="flex flex-wrap gap-2 border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
               {[

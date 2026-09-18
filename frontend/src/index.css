@@ -3,8 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
   * {
-    border-color: rgba(148, 163, 184, 0.2);
+    border-color: #e2e8f0;
+  }
+  .dark * {
+    border-color: rgba(51, 65, 85, 0.4);
+  }
+
+  body {
+    @apply antialiased text-slate-900 bg-[#f8fafc] dark:bg-[#0a0e17] dark:text-slate-100;
   }
 }
 
