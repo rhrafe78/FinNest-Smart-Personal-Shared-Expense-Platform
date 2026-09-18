@@ -210,9 +210,7 @@ export const RegisterPage = () => {
                 className="w-full font-bold mt-2"
                 isLoading={formLoading}
               >
-                <span className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
-                  Send Verification OTP <ArrowRight className="w-4 h-4 shrink-0" />
-                </span>
+                Send Verification OTP
               </Button>
             </form>
 
