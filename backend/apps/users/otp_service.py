@@ -115,29 +115,40 @@ class OTPService:
 
         email_sent = False
         email_error = None
-        has_smtp_credentials = bool(getattr(settings, 'EMAIL_HOST_USER', None) and getattr(settings, 'EMAIL_HOST_PASSWORD', None))
+        has_smtp_credentials = bool(
+            getattr(settings, 'EMAIL_HOST_USER', None) and 
+            getattr(settings, 'EMAIL_HOST_PASSWORD', None) and
+            str(settings.EMAIL_HOST_USER).strip() and
+            str(settings.EMAIL_HOST_PASSWORD).strip()
+        )
 
-        try:
-            from django.core.mail import EmailMultiAlternatives
-            msg = EmailMultiAlternatives(
-                subject=subject,
-                body=plain_message,
-                from_email=from_email,
-                to=[email],
-                reply_to=[sender_email],
-                headers={
-                    'X-Priority': '1 (Highest)',
-                    'X-MSMail-Priority': 'High',
-                    'Importance': 'High',
-                    'Precedence': 'Urgent',
-                }
-            )
-            msg.attach_alternative(html_message, "text/html")
-            msg.send(fail_silently=False)
-            email_sent = True
-        except Exception as e:
-            email_error = str(e)
+        if has_smtp_credentials:
+            try:
+                import socket
+                socket.setdefaulttimeout(4)
+                from django.core.mail import EmailMultiAlternatives
+                msg = EmailMultiAlternatives(
+                    subject=subject,
+                    body=plain_message,
+                    from_email=from_email,
+                    to=[email],
+                    reply_to=[sender_email],
+                    headers={
+                        'X-Priority': '1 (Highest)',
+                        'X-MSMail-Priority': 'High',
+                        'Importance': 'High',
+                        'Precedence': 'Urgent',
+                    }
+                )
+                msg.attach_alternative(html_message, "text/html")
+                msg.send(fail_silently=False)
+                email_sent = True
+            except Exception as e:
+                email_error = str(e)
+                email_sent = False
+        else:
             email_sent = False
+            email_error = "SMTP credentials not configured."
 
         # Terminal feedback
         print(f"\n==========================================")
@@ -157,7 +168,7 @@ class OTPService:
             'expires_in_minutes': cls.EXPIRY_MINUTES,
             'email_sent': email_sent,
             'email_error': email_error if settings.DEBUG else None,
-            'dev_preview_code': code if settings.DEBUG else None
+            'dev_preview_code': code if (settings.DEBUG or not email_sent) else None
         }
 
     @classmethod

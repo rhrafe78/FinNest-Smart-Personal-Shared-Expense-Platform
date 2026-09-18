@@ -248,8 +248,21 @@ export const LoginPage = () => {
 
                   <div className="p-3 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-900 flex items-center gap-2">
                     <span className="text-emerald-500 font-bold">✓</span>
-                    <span>We've sent a 6-digit verification code to your Gmail inbox! Please check your Inbox (or Spam/Junk folder).</span>
+                    <span>We've sent a 6-digit verification code to your email inbox! Please check your Inbox (or Spam folder).</span>
                   </div>
+
+                  {devPreviewCode && (
+                    <div className="p-3 text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 rounded-xl border border-amber-200 dark:border-amber-900 flex items-center justify-between">
+                      <span>Login OTP Code: <strong className="font-mono text-sm font-bold tracking-widest ml-1">{devPreviewCode}</strong></span>
+                      <button
+                        type="button"
+                        onClick={() => handleVerifyLoginOTP(devPreviewCode)}
+                        className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all"
+                      >
+                        Auto Fill &amp; Sign In
+                      </button>
+                    </div>
+                  )}
 
                   <OTPInput
                     length={6}

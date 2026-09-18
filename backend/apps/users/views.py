@@ -18,16 +18,36 @@ class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            # Fetch the generated dev preview code if in debug mode
+        email = request.data.get('email', '').strip().lower()
+        # If user exists but is not verified yet, update their info and re-issue OTP
+        existing_user = User.objects.filter(email__iexact=email).first() if email else None
+        if existing_user and not existing_user.is_verified:
+            existing_user.first_name = request.data.get('first_name', existing_user.first_name)
+            existing_user.last_name = request.data.get('last_name', existing_user.last_name)
+            if request.data.get('password'):
+                existing_user.set_password(request.data['password'])
+            existing_user.save()
+            user = existing_user
             otp_info = OTPService.generate_and_send_otp(user.email, purpose='register')
             return Response({
                 'user': UserSerializer(user).data,
                 'email': user.email,
                 'is_verified': False,
                 'email_sent': otp_info.get('email_sent', False),
+                'dev_preview_code': otp_info.get('dev_preview_code'),
+                'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
+            }, status=status.HTTP_201_CREATED)
+
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register')
+            return Response({
+                'user': UserSerializer(user).data,
+                'email': user.email,
+                'is_verified': False,
+                'email_sent': otp_info.get('email_sent', False),
+                'dev_preview_code': otp_info.get('dev_preview_code'),
                 'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -56,6 +76,7 @@ class SendOTPView(APIView):
                 'purpose': purpose,
                 'email_sent': res.get('email_sent', False),
                 'email_error': res.get('email_error'),
+                'dev_preview_code': res.get('dev_preview_code'),
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
