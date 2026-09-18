@@ -7,45 +7,48 @@ from .models import EmailOTP
 
 
 def _async_send_email(subject, plain_message, html_message, from_email, sender_email, email, purpose, code):
-    """Dispatches OTP email in a background thread for instant UI response."""
+    """Dispatches OTP email directly via Port 465 SSL with clean headers for instant inbox delivery."""
     try:
-        from django.core.mail import EmailMultiAlternatives
-        msg = EmailMultiAlternatives(
-            subject=subject,
-            body=plain_message,
-            from_email=from_email,
-            to=[email],
-            reply_to=[sender_email],
-            headers={
-                'X-Priority': '1 (Highest)',
-                'X-MSMail-Priority': 'High',
-                'Importance': 'High',
-                'Precedence': 'Urgent',
-            }
-        )
-        msg.attach_alternative(html_message, "text/html")
-        msg.send(fail_silently=False)
-        print(f"\n[ASYNC OTP EMAIL SUCCESS (Port 587)] To: {email} | Code: {code}\n")
-    except Exception as e_primary:
+        import smtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        from email.utils import formatdate, make_msgid
+
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = from_email
+        msg['To'] = email
+        msg['Reply-To'] = sender_email
+        msg['Date'] = formatdate(localtime=True)
+        msg['Message-ID'] = make_msgid(domain='gmail.com')
+
+        msg.attach(MIMEText(plain_message, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_message, 'html', 'utf-8'))
+
+        host_user = str(settings.EMAIL_HOST_USER).strip()
+        host_pwd = str(settings.EMAIL_HOST_PASSWORD).strip()
+
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10)
+        server.login(host_user, host_pwd)
+        server.sendmail(host_user, [email], msg.as_string())
+        server.quit()
+        print(f"\n[FAST OTP EMAIL SUCCESS (Port 465 SSL)] To: {email} | Code: {code}\n")
+    except Exception as e_ssl:
+        # Fallback to standard Django mail
         try:
-            import smtplib
-            from email.mime.multipart import MIMEMultipart
-            from email.mime.text import MIMEText
-
-            fallback_msg = MIMEMultipart('alternative')
-            fallback_msg['Subject'] = subject
-            fallback_msg['From'] = from_email
-            fallback_msg['To'] = email
-            fallback_msg.attach(MIMEText(plain_message, 'plain'))
-            fallback_msg.attach(MIMEText(html_message, 'html'))
-
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=12)
-            server.login(str(settings.EMAIL_HOST_USER).strip(), str(settings.EMAIL_HOST_PASSWORD).strip())
-            server.sendmail(str(settings.EMAIL_HOST_USER).strip(), [email], fallback_msg.as_string())
-            server.quit()
-            print(f"\n[ASYNC OTP EMAIL SUCCESS (Port 465 SSL)] To: {email} | Code: {code}\n")
+            from django.core.mail import EmailMultiAlternatives
+            fallback_msg = EmailMultiAlternatives(
+                subject=subject,
+                body=plain_message,
+                from_email=from_email,
+                to=[email],
+                reply_to=[sender_email]
+            )
+            fallback_msg.attach_alternative(html_message, "text/html")
+            fallback_msg.send(fail_silently=False)
+            print(f"\n[FAST OTP EMAIL FALLBACK (Port 587)] To: {email} | Code: {code}\n")
         except Exception as e_fallback:
-            print(f"\n[ASYNC OTP EMAIL FAILED] To: {email} | 587: {e_primary} | 465: {e_fallback}\n")
+            print(f"\n[FAST OTP EMAIL FAILED] To: {email} | SSL: {e_ssl} | 587: {e_fallback}\n")
 
 
 class OTPService:
@@ -167,7 +170,7 @@ class OTPService:
             threading.Thread(
                 target=_async_send_email,
                 args=(subject, plain_message, html_message, from_email, sender_email, email, purpose, code),
-                daemon=True
+                daemon=False
             ).start()
             email_sent = True
         else:
