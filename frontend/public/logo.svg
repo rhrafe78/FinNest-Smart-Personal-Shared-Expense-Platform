@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#4F46E5"/>
+  <!-- Nest curves -->
+  <path d="M12 28C12 34.6274 17.3726 40 24 40C30.6274 40 36 34.6274 36 28C36 26.5 35 25.5 33.5 25.5C32 25.5 31.5 26.5 31.5 28C31.5 32.1421 28.1421 35.5 24 35.5C19.8579 35.5 16.5 32.1421 16.5 28C16.5 26.5 15.5 25.5 14 25.5C12.5 25.5 12 26.5 12 28Z" fill="#818CF8"/>
+  <path d="M16 23C16 27.4183 19.5817 31 24 31C28.4183 31 32 27.4183 32 23C32 21.8 31 21 29.8 21C28.6 21 28 21.8 28 23C28 25.2091 26.2091 27 24 27C21.7909 27 20 25.2091 20 23C20 21.8 19 21 17.8 21C16.6 21 16 21.8 16 23Z" fill="#A5B4FC"/>
+  <!-- Golden coin / growth egg rising from nest -->
+  <circle cx="24" cy="17" r="7" fill="#10B981"/>
+  <path d="M22 17L23.5 18.5L26.5 15" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
