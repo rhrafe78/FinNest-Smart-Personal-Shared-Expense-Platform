@@ -177,12 +177,12 @@ class OTPService:
         }
         purpose_text = purpose_labels.get(purpose, 'confirm your request')
 
-        # Dispatch email asynchronously in background thread so the HTTP API returns immediately (< 40ms)
+        # Dispatch email asynchronously in active worker thread (daemon=False ensures delivery completion)
         try:
             dispatch_thread = threading.Thread(
                 target=_dispatch_otp_email,
                 args=(email, code, purpose, recipient_name, purpose_text),
-                daemon=True
+                daemon=False
             )
             dispatch_thread.start()
         except Exception as e:
@@ -190,7 +190,7 @@ class OTPService:
 
         # Terminal feedback
         print(f"\n==========================================")
-        print(f"[FINNEST REAL OTP DISPATCH (Instant Non-Blocking)]")
+        print(f"[FINNEST REAL OTP DISPATCHED TO GMAIL]")
         print(f"To: {email}")
         print(f"Purpose: {purpose}")
         print(f"Code: {code} (Expires in {cls.EXPIRY_MINUTES}m)")
@@ -200,7 +200,6 @@ class OTPService:
             'email': email,
             'purpose': purpose,
             'expires_in_minutes': cls.EXPIRY_MINUTES,
-            'otp_code': code,
             'email_sent': True,
             'email_error': None,
         }

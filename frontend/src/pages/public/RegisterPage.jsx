@@ -30,7 +30,6 @@ export const RegisterPage = () => {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [resendSuccess, setResendSuccess] = useState(false);
-  const [devOtp, setDevOtp] = useState('');
 
   // Strong password rule checks
   const pass = formData.password;
@@ -61,10 +60,6 @@ export const RegisterPage = () => {
       const res = await api.post('/auth/register/', cleanPayload);
       setRegisteredEmail(res.data.email || cleanPayload.email);
       setEmailSent(Boolean(res.data.email_sent));
-      const code = res.data.otp_code || res.data.debug_otp;
-      if (code) {
-        setDevOtp(code);
-      }
       setStep(2);
     } catch (err) {
       const emailError = err.response?.data?.email?.[0];
@@ -112,14 +107,10 @@ export const RegisterPage = () => {
     setOtpError('');
     setResendSuccess(false);
     try {
-      const res = await api.post('/auth/send-otp/', {
+      await api.post('/auth/send-otp/', {
         email: registeredEmail.trim().toLowerCase(),
         purpose: 'register',
       });
-      const code = res.data.otp_code || res.data.debug_otp;
-      if (code) {
-        setDevOtp(code);
-      }
       setResendSuccess(true);
       setTimeout(() => setResendSuccess(false), 6000);
     } catch (err) {
@@ -333,43 +324,15 @@ export const RegisterPage = () => {
         ) : (
           /* STEP 2: Real Database OTP Verification */
           <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-xl space-y-6">
-            <div className="p-3 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-900 space-y-1">
-              <div className="flex items-center gap-2 font-semibold">
+            <div className="p-3.5 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 rounded-2xl border border-emerald-200 dark:border-emerald-900 space-y-1.5 shadow-sm">
+              <div className="flex items-center gap-2 font-bold text-sm">
                 <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                <span>Verification code sent to {registeredEmail}</span>
+                <span>Verification code sent to Gmail</span>
               </div>
-              <p className="text-[11px] text-emerald-600/90 dark:text-emerald-400/90 pl-6">
-                Please check your Inbox (or Spam folder). If using the Gmail mobile app, swipe down to refresh.
+              <p className="text-[12px] text-emerald-700 dark:text-emerald-400 pl-6 leading-relaxed">
+                We have sent your 6-digit verification code to <strong className="font-semibold text-emerald-900 dark:text-emerald-200">{registeredEmail}</strong>. Please check your Gmail Inbox (or Spam folder) and enter it below.
               </p>
             </div>
-
-            {devOtp && (
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50 to-brand-50 dark:from-indigo-950/50 dark:to-brand-950/40 border border-indigo-200/80 dark:border-indigo-800/80 shadow-md space-y-2.5">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
-                      Verification Code
-                    </span>
-                    <span className="text-3xl font-black font-mono tracking-widest text-slate-900 dark:text-white">
-                      {devOtp}
-                    </span>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => handleVerifyOTP(devOtp)}
-                    className="font-bold shadow-lg shadow-brand-500/20 active:scale-95 transition-all text-xs shrink-0"
-                    isLoading={otpLoading}
-                  >
-                    One-Click Verify →
-                  </Button>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  ⚡ Use this instant code or type the 6 digits below to complete verification.
-                </p>
-              </div>
-            )}
 
             <OTPInput
               length={6}
