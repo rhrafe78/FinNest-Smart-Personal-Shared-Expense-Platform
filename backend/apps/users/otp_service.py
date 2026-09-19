@@ -1,3 +1,6 @@
+import os
+import json
+import urllib.request
 import secrets
 import threading
 from datetime import timedelta
@@ -117,6 +120,66 @@ class OTPService:
         email_sent = False
         email_error = None
 
+        # 1. Check Brevo HTTP API (Port 443 HTTPS - recommended for Render Free Tier)
+        brevo_key = os.getenv('BREVO_API_KEY', getattr(settings, 'BREVO_API_KEY', '')).strip()
+        if brevo_key:
+            try:
+                payload = {
+                    "sender": {"name": "FinNest Security", "email": sender_email},
+                    "to": [{"email": email, "name": recipient_name}],
+                    "subject": subject,
+                    "htmlContent": html_message,
+                    "textContent": plain_message
+                }
+                req = urllib.request.Request(
+                    "https://api.brevo.com/v3/smtp/email",
+                    data=json.dumps(payload).encode('utf-8'),
+                    headers={
+                        "api-key": brevo_key,
+                        "Content-Type": "application/json",
+                        "accept": "application/json"
+                    },
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    if resp.status in (200, 201):
+                        email_sent = True
+                        print(f"[BREVO HTTP API EMAIL SUCCESS] To: {email} | Code: {code}")
+            except Exception as e_brevo:
+                print(f"[BREVO HTTP API ERROR] {e_brevo}")
+                email_error = f"Brevo error: {e_brevo}"
+
+        # 2. Check Resend HTTP API (Port 443 HTTPS - recommended for Render Free Tier)
+        if not email_sent:
+            resend_key = os.getenv('RESEND_API_KEY', getattr(settings, 'RESEND_API_KEY', '')).strip()
+            if resend_key:
+                resend_from = os.getenv('RESEND_FROM_EMAIL', getattr(settings, 'RESEND_FROM_EMAIL', 'FinNest <onboarding@resend.dev>')).strip()
+                try:
+                    payload = {
+                        "from": resend_from,
+                        "to": [email],
+                        "subject": subject,
+                        "html": html_message,
+                        "text": plain_message
+                    }
+                    req = urllib.request.Request(
+                        "https://api.resend.com/emails",
+                        data=json.dumps(payload).encode('utf-8'),
+                        headers={
+                            "Authorization": f"Bearer {resend_key}",
+                            "Content-Type": "application/json"
+                        },
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req, timeout=8) as resp:
+                        if resp.status in (200, 201):
+                            email_sent = True
+                            print(f"[RESEND HTTP API EMAIL SUCCESS] To: {email} | Code: {code}")
+                except Exception as e_resend:
+                    print(f"[RESEND HTTP API ERROR] {e_resend}")
+                    email_error = f"Resend error: {e_resend}"
+
+        # 3. Direct Gmail SMTP SSL (Port 465 - works on Localhost & servers with open SMTP)
         has_smtp_credentials = bool(
             getattr(settings, 'EMAIL_HOST_USER', None) and 
             getattr(settings, 'EMAIL_HOST_PASSWORD', None) and
@@ -124,7 +187,7 @@ class OTPService:
             str(settings.EMAIL_HOST_PASSWORD).strip()
         )
 
-        if has_smtp_credentials:
+        if not email_sent and has_smtp_credentials:
             try:
                 import smtplib
                 from email.mime.multipart import MIMEMultipart
@@ -145,7 +208,7 @@ class OTPService:
                 host_user = str(settings.EMAIL_HOST_USER).strip()
                 host_pwd = str(settings.EMAIL_HOST_PASSWORD).strip()
 
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=6)
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=4)
                 server.login(host_user, host_pwd)
                 server.sendmail(host_user, [email], msg.as_string())
                 try:
@@ -156,27 +219,32 @@ class OTPService:
                 print(f"[DIRECT OTP EMAIL SUCCESS (Port 465 SSL)] To: {email} | Code: {code}")
             except Exception as e_ssl:
                 print(f"[DIRECT OTP EMAIL ERROR (Port 465)] {e_ssl}")
-                # Fallback to standard Django mail
-                try:
-                    from django.core.mail import EmailMultiAlternatives
-                    fallback_msg = EmailMultiAlternatives(
-                        subject=subject,
-                        body=plain_message,
-                        from_email=from_email,
-                        to=[email],
-                        reply_to=[sender_email]
-                    )
-                    fallback_msg.attach_alternative(html_message, "text/html")
-                    fallback_msg.send(fail_silently=False)
-                    email_sent = True
-                    print(f"[DIRECT OTP EMAIL FALLBACK (Port 587)] To: {email} | Code: {code}")
-                except Exception as e_fallback:
-                    email_error = f"SSL: {e_ssl} | Fallback: {e_fallback}"
-                    email_sent = False
-                    print(f"[DIRECT OTP EMAIL FAILED] To: {email} | Error: {email_error}")
-        else:
+                is_on_render = bool(os.getenv('RENDER') or os.getenv('RENDER_SERVICE_ID'))
+                if is_on_render:
+                    email_error = "Render Free Tier blocks outbound SMTP (ports 25, 465, 587). Please configure BREVO_API_KEY or RESEND_API_KEY in Render Environment Variables for live delivery."
+                    print(f"[RENDER SMTP BLOCKED] {email_error}")
+                else:
+                    # Fallback to standard Django mail on non-render environments
+                    try:
+                        from django.core.mail import EmailMultiAlternatives
+                        fallback_msg = EmailMultiAlternatives(
+                            subject=subject,
+                            body=plain_message,
+                            from_email=from_email,
+                            to=[email],
+                            reply_to=[sender_email]
+                        )
+                        fallback_msg.attach_alternative(html_message, "text/html")
+                        fallback_msg.send(fail_silently=False)
+                        email_sent = True
+                        print(f"[DIRECT OTP EMAIL FALLBACK (Port 587)] To: {email} | Code: {code}")
+                    except Exception as e_fallback:
+                        email_error = f"SSL: {e_ssl} | Fallback: {e_fallback}"
+                        email_sent = False
+                        print(f"[DIRECT OTP EMAIL FAILED] To: {email} | Error: {email_error}")
+        elif not email_sent and not has_smtp_credentials:
             email_sent = False
-            email_error = "SMTP credentials not configured."
+            email_error = "Neither HTTP Email API (Brevo/Resend) nor SMTP credentials are configured."
 
         # Terminal feedback
         print(f"\n==========================================")

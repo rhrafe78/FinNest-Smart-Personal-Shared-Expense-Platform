@@ -192,5 +192,8 @@ else:
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'thefinnest22@gmail.com').strip()
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'loywilvmcydoioln').strip()
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'FinNest Security <thefinnest22@gmail.com>')
-EMAIL_TIMEOUT = 10
+# HTTP Email APIs (Used for Render Free Tier where outbound SMTP ports 25/465/587 are blocked)
+BREVO_API_KEY = os.getenv('BREVO_API_KEY', '').strip()
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', '').strip()
+RESEND_FROM_EMAIL = os.getenv('RESEND_FROM_EMAIL', 'FinNest <onboarding@resend.dev>').strip()
 
