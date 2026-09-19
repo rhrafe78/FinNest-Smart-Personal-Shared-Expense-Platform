@@ -1,7 +1,26 @@
+import re
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, UserProfile
 from .otp_service import OTPService
+
+def validate_password_strength(value):
+    """
+    Validates that a password contains:
+    - At least 8 characters
+    - At least 1 uppercase (capital) letter
+    - At least 1 lowercase (small) letter
+    - At least 1 numeric digit (0-9)
+    """
+    if len(value) < 8:
+        raise serializers.ValidationError("Password must be at least 8 characters long.")
+    if not re.search(r'[A-Z]', value):
+        raise serializers.ValidationError("Password must contain at least one uppercase letter (A-Z).")
+    if not re.search(r'[a-z]', value):
+        raise serializers.ValidationError("Password must contain at least one lowercase letter (a-z).")
+    if not re.search(r'\d', value):
+        raise serializers.ValidationError("Password must contain at least one numeric digit (0-9).")
+    return value
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=False, allow_blank=True)
-    password = serializers.CharField(write_only=True, min_length=6)
+    password = serializers.CharField(write_only=True, min_length=8)
     currency = serializers.CharField(write_only=True, default='BDT', required=False)
 
     class Meta:
@@ -40,6 +59,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("An account with this email already exists.")
         return value.lower()
+
+    def validate_password(self, value):
+        return validate_password_strength(value)
 
     def validate(self, attrs):
         if not attrs.get('username'):
@@ -73,7 +95,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True, min_length=6)
+    new_password = serializers.CharField(required=True, min_length=8)
+
+    def validate_new_password(self, value):
+        return validate_password_strength(value)
 
 class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)

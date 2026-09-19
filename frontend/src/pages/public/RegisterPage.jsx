@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ShieldCheck, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, ShieldCheck, ArrowRight, ArrowLeft, CheckCircle2, Eye, EyeOff, Check, X } from 'lucide-react';
 import { Logo } from '../../components/ui/Logo';
 import { Button } from '../../components/ui/Button';
 import { OTPInput } from '../../components/ui/OTPInput';
@@ -19,6 +19,7 @@ export const RegisterPage = () => {
     password: '',
     currency: 'BDT',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -30,9 +31,24 @@ export const RegisterPage = () => {
   const [otpError, setOtpError] = useState('');
   const [resendSuccess, setResendSuccess] = useState(false);
 
+  // Strong password rule checks
+  const pass = formData.password;
+  const hasMinLength = pass.length >= 8;
+  const hasUpper = /[A-Z]/.test(pass);
+  const hasLower = /[a-z]/.test(pass);
+  const hasNumber = /[0-9]/.test(pass);
+  const isPasswordStrong = hasMinLength && hasUpper && hasLower && hasNumber;
+  const strengthScore = [hasMinLength, hasUpper, hasLower, hasNumber].filter(Boolean).length;
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
+
+    if (!isPasswordStrong) {
+      setFormError('Please ensure your password meets all strong password requirements (8+ chars, capital & small letters, and numbers).');
+      return;
+    }
+
     setFormLoading(true);
     const cleanPayload = {
       ...formData,
@@ -47,8 +63,8 @@ export const RegisterPage = () => {
       setStep(2);
     } catch (err) {
       setFormError(
-        err.response?.data?.email?.[0] ||
         err.response?.data?.password?.[0] ||
+        err.response?.data?.email?.[0] ||
         err.response?.data?.detail ||
         'Registration failed. Please check inputs.'
       );
@@ -182,15 +198,72 @@ export const RegisterPage = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
-                    placeholder="At least 6 characters"
+                    placeholder="Min 8 chars with A-Z, a-z, 0-9"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   />
                   <Lock className="w-4 h-4 absolute left-3 top-3.5 text-slate-400" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-0.5 rounded transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
+
+                {/* Password strength & requirements checklist */}
+                {pass.length > 0 && (
+                  <div className="mt-2.5 space-y-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 text-xs">
+                    {/* Strength meter bar */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] font-semibold">
+                        <span className="text-slate-500 dark:text-slate-400">Password Strength:</span>
+                        <span
+                          className={
+                            strengthScore <= 2
+                              ? 'text-rose-500 font-bold'
+                              : strengthScore === 3
+                              ? 'text-amber-500 font-bold'
+                              : 'text-emerald-500 font-bold'
+                          }
+                        >
+                          {strengthScore <= 2 ? 'Weak' : strengthScore === 3 ? 'Medium' : 'Strong & Secure ✓'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-4 gap-1.5 h-1.5 w-full">
+                        <div className={`rounded-full transition-all ${strengthScore >= 1 ? (strengthScore <= 2 ? 'bg-rose-500' : strengthScore === 3 ? 'bg-amber-500' : 'bg-emerald-500') : 'bg-slate-200 dark:bg-slate-800'}`} />
+                        <div className={`rounded-full transition-all ${strengthScore >= 2 ? (strengthScore <= 2 ? 'bg-rose-500' : strengthScore === 3 ? 'bg-amber-500' : 'bg-emerald-500') : 'bg-slate-200 dark:bg-slate-800'}`} />
+                        <div className={`rounded-full transition-all ${strengthScore >= 3 ? (strengthScore === 3 ? 'bg-amber-500' : 'bg-emerald-500') : 'bg-slate-200 dark:bg-slate-800'}`} />
+                        <div className={`rounded-full transition-all ${strengthScore >= 4 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-800'}`} />
+                      </div>
+                    </div>
+
+                    {/* Check items */}
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                      <div className={`flex items-center gap-1.5 ${hasMinLength ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {hasMinLength ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 ml-1 mr-1" />}
+                        <span>8+ Characters</span>
+                      </div>
+                      <div className={`flex items-center gap-1.5 ${hasUpper ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {hasUpper ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 ml-1 mr-1" />}
+                        <span>Capital letter (A-Z)</span>
+                      </div>
+                      <div className={`flex items-center gap-1.5 ${hasLower ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {hasLower ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 ml-1 mr-1" />}
+                        <span>Small letter (a-z)</span>
+                      </div>
+                      <div className={`flex items-center gap-1.5 ${hasNumber ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {hasNumber ? <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 ml-1 mr-1" />}
+                        <span>Number (0-9)</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

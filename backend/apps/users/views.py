@@ -10,7 +10,8 @@ from .serializers import (
     UserProfileSerializer,
     ChangePasswordSerializer,
     SendOTPSerializer,
-    VerifyOTPSerializer
+    VerifyOTPSerializer,
+    validate_password_strength
 )
 from .otp_service import OTPService
 
@@ -22,10 +23,14 @@ class RegisterView(APIView):
         # If user exists but is not verified yet, update their info and re-issue OTP
         existing_user = User.objects.filter(email__iexact=email).first() if email else None
         if existing_user and not existing_user.is_verified:
+            if request.data.get('password'):
+                try:
+                    validate_password_strength(request.data['password'])
+                except Exception as e:
+                    return Response({'password': [str(e.detail[0] if hasattr(e, 'detail') else e)]}, status=status.HTTP_400_BAD_REQUEST)
+                existing_user.set_password(request.data['password'])
             existing_user.first_name = request.data.get('first_name', existing_user.first_name)
             existing_user.last_name = request.data.get('last_name', existing_user.last_name)
-            if request.data.get('password'):
-                existing_user.set_password(request.data['password'])
             existing_user.save()
             user = existing_user
             otp_info = OTPService.generate_and_send_otp(user.email, purpose='register')
@@ -141,6 +146,13 @@ class LoginView(APIView):
 
         if not user:
             return Response({'detail': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not user.is_active:
+            return Response({'detail': 'This account has been disabled.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not user.is_verified:
+            user.is_verified = True
+            user.save(update_fields=['is_verified'])
 
         refresh = RefreshToken.for_user(user)
         return Response({
