@@ -56,9 +56,16 @@ import { ConfirmDeleteModal } from '../../components/modals/ConfirmDeleteModal';
 
 export const DashboardPage = () => {
   const { user } = useAuth();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(() => {
+    try {
+      const cached = sessionStorage.getItem('finnest_dashboard_cache');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
   const [insights, setInsights] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(null);
 
   // Modals state
@@ -124,6 +131,9 @@ export const DashboardPage = () => {
     try {
       const dashRes = await api.get('/analytics/dashboard/');
       setData(dashRes.data);
+      try {
+        sessionStorage.setItem('finnest_dashboard_cache', JSON.stringify(dashRes.data));
+      } catch (e) {}
       if (dashRes.data?.salary_breakdown) {
         setSalaryInput(dashRes.data.salary_breakdown.monthly_salary || '0');
       }
@@ -199,33 +209,39 @@ export const DashboardPage = () => {
     );
   }
 
-  if (!data) return null;
+  const safeData = data || {
+    currency: 'BDT',
+    daily_tracker: {
+      today_expense: '0.00',
+      daily_target: '500.00',
+      difference: '500.00',
+      is_profit: true,
+      expenses_list: [],
+      count: 0
+    },
+    salary_breakdown: {
+      monthly_salary: '0.00',
+      effective_income: '0.00',
+      total_spent_this_month: '0.00',
+      remaining_salary: '0.00',
+      spent_pct: 0.0,
+      is_overspent: false,
+      categories: {}
+    },
+    shared_summary: {
+      active_households: 0,
+      you_owe: '0.00',
+      others_owe_you: '0.00',
+      pending_settlements: 0,
+      upcoming_bills: 0
+    },
+    recent_transactions: []
+  };
 
-  const curr = data.currency === 'BDT' ? '৳' : data.currency === 'USD' ? '$' : '৳';
-  const daily = data.daily_tracker || {
-    today_expense: '0.00',
-    daily_target: '500.00',
-    difference: '500.00',
-    is_profit: true,
-    expenses_list: [],
-    count: 0
-  };
-  const salary = data.salary_breakdown || {
-    monthly_salary: '0.00',
-    effective_income: '0.00',
-    total_spent_this_month: '0.00',
-    remaining_salary: '0.00',
-    spent_pct: 0.0,
-    is_overspent: false,
-    categories: {}
-  };
-  const shared = data.shared_summary || {
-    active_households: 0,
-    you_owe: '0.00',
-    others_owe_you: '0.00',
-    pending_settlements: 0,
-    upcoming_bills: 0
-  };
+  const curr = safeData.currency === 'BDT' ? '৳' : safeData.currency === 'USD' ? '$' : '৳';
+  const daily = safeData.daily_tracker;
+  const salary = safeData.salary_breakdown;
+  const shared = safeData.shared_summary;
 
   const remainingNum = parseFloat(salary.remaining_salary || '0');
   const salaryNum = parseFloat(salary.effective_income || '0');
@@ -567,9 +583,9 @@ export const DashboardPage = () => {
             </div>
           )
         ) : (
-          data.recent_transactions && data.recent_transactions.length > 0 ? (
+          safeData.recent_transactions && safeData.recent_transactions.length > 0 ? (
             <div className="space-y-2">
-              {data.recent_transactions.map((tx) => (
+              {safeData.recent_transactions.map((tx) => (
                 <div
                   key={tx.id}
                   className="group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/40 border border-transparent hover:border-slate-200/80 dark:hover:border-slate-800 transition-all duration-150"

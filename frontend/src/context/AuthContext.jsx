@@ -13,17 +13,21 @@ export const AuthProvider = ({ children }) => {
 
     if (savedUser && token) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed);
+        setLoading(false);
+
         // Refresh profile data silently in background
         api.get('/auth/me/')
           .then((res) => {
             setUser(res.data);
             localStorage.setItem('finnest_user', JSON.stringify(res.data));
           })
-          .catch(() => {
-            // If token invalid, interceptor will handle or clear
-          })
-          .finally(() => setLoading(false));
+          .catch((err) => {
+            if (err.response?.status === 401) {
+              logout();
+            }
+          });
       } catch (e) {
         localStorage.removeItem('finnest_user');
         setLoading(false);
