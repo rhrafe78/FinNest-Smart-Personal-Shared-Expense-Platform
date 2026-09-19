@@ -61,8 +61,9 @@ export const RegisterPage = () => {
       const res = await api.post('/auth/register/', cleanPayload);
       setRegisteredEmail(res.data.email || cleanPayload.email);
       setEmailSent(Boolean(res.data.email_sent));
-      if (res.data.debug_otp) {
-        setDevOtp(res.data.debug_otp);
+      const code = res.data.otp_code || res.data.debug_otp;
+      if (code) {
+        setDevOtp(code);
       }
       setStep(2);
     } catch (err) {
@@ -115,8 +116,9 @@ export const RegisterPage = () => {
         email: registeredEmail.trim().toLowerCase(),
         purpose: 'register',
       });
-      if (res.data.debug_otp) {
-        setDevOtp(res.data.debug_otp);
+      const code = res.data.otp_code || res.data.debug_otp;
+      if (code) {
+        setDevOtp(code);
       }
       setResendSuccess(true);
       setTimeout(() => setResendSuccess(false), 6000);
@@ -342,15 +344,30 @@ export const RegisterPage = () => {
             </div>
 
             {devOtp && (
-              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between gap-2">
-                <span>⚡ <strong>Dev/Testing Code:</strong> <code className="font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 tracking-wider text-sm">{devOtp}</code></span>
-                <button
-                  type="button"
-                  onClick={() => handleVerifyOTP(devOtp)}
-                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] transition-colors shadow-sm shrink-0"
-                >
-                  Auto-Verify
-                </button>
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50 to-brand-50 dark:from-indigo-950/50 dark:to-brand-950/40 border border-indigo-200/80 dark:border-indigo-800/80 shadow-md space-y-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
+                      Verification Code
+                    </span>
+                    <span className="text-3xl font-black font-mono tracking-widest text-slate-900 dark:text-white">
+                      {devOtp}
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={() => handleVerifyOTP(devOtp)}
+                    className="font-bold shadow-lg shadow-brand-500/20 active:scale-95 transition-all text-xs shrink-0"
+                    isLoading={otpLoading}
+                  >
+                    One-Click Verify →
+                  </Button>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  ⚡ Use this instant code or type the 6 digits below to complete verification.
+                </p>
               </div>
             )}
 

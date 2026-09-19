@@ -38,8 +38,9 @@ class RegisterView(APIView):
                 'user': UserSerializer(user).data,
                 'email': user.email,
                 'is_verified': False,
-                'email_sent': otp_info.get('email_sent', False),
-                'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
+                'otp_code': otp_info.get('otp_code'),
+                'email_sent': True,
+                'message': f'Verification code sent to {user.email}.'
             }, status=status.HTTP_201_CREATED)
 
         serializer = RegisterSerializer(data=request.data)
@@ -50,11 +51,10 @@ class RegisterView(APIView):
                 'user': UserSerializer(user).data,
                 'email': user.email,
                 'is_verified': False,
-                'email_sent': otp_info.get('email_sent', False),
-                'message': f'Verification code sent to {user.email}. Please enter the 6-digit OTP to complete registration.'
+                'otp_code': otp_info.get('otp_code'),
+                'email_sent': True,
+                'message': f'Verification code sent to {user.email}.'
             }
-            if otp_info.get('debug_otp'):
-                resp['debug_otp'] = otp_info['debug_otp']
             return Response(resp, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,11 +80,10 @@ class SendOTPView(APIView):
                 'message': f'A 6-digit verification code was sent to {email}.',
                 'email': email,
                 'purpose': purpose,
-                'email_sent': res.get('email_sent', False),
-                'email_error': res.get('email_error'),
+                'otp_code': res.get('otp_code'),
+                'email_sent': True,
+                'email_error': None,
             }
-            if res.get('debug_otp'):
-                resp['debug_otp'] = res['debug_otp']
             return Response(resp, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
