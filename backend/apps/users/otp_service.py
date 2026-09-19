@@ -137,7 +137,8 @@ class OTPService:
                     headers={
                         "api-key": brevo_key,
                         "Content-Type": "application/json",
-                        "accept": "application/json"
+                        "accept": "application/json",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FinNest/1.0"
                     },
                     method="POST"
                 )
@@ -167,7 +168,8 @@ class OTPService:
                         data=json.dumps(payload).encode('utf-8'),
                         headers={
                             "Authorization": f"Bearer {resend_key}",
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FinNest/1.0"
                         },
                         method="POST"
                     )
