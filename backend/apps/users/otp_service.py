@@ -93,8 +93,6 @@ def _dispatch_otp_email(email: str, code: str, purpose: str, recipient_name: str
     msg['To'] = email
     msg['Reply-To'] = host_user
     msg['Date'] = formatdate(localtime=True)
-    msg['Auto-Submitted'] = 'auto-generated'
-    msg['X-Auto-Response-Suppress'] = 'All'
 
     msg.attach(MIMEText(plain_message, 'plain', 'utf-8'))
     msg.attach(MIMEText(html_message, 'html', 'utf-8'))
@@ -141,8 +139,7 @@ class OTPService:
     def generate_and_send_otp(cls, email: str, purpose: str = 'register'):
         """
         Generates or reuses a 6-digit numeric OTP, stores it in the database,
-        and dispatches it asynchronously to the user's email address.
-        Smart resend reuse avoids invalidating recently generated codes.
+        and dispatches it directly to the user's email address.
         """
         email = email.strip().lower()
 
@@ -159,22 +156,11 @@ class OTPService:
         if existing_active_otp:
             # Reuse the same code so that whatever email arrives in their inbox is valid!
             code = existing_active_otp.otp_code
-            otp_record = existing_active_otp
-            # Refresh expiration time to 10 minutes
-            otp_record.expires_at = timezone.now() + timedelta(minutes=cls.EXPIRY_MINUTES)
-            otp_record.save()
-            print(f"[OTP REUSE ACTIVE CODE] To: {email} | Code: {code}")
         else:
-            # Invalidate older unused OTPs for this email and purpose
-            EmailOTP.objects.filter(
-                email=email,
-                purpose=purpose,
-                is_used=False
-            ).update(is_used=True)
-
-            code = str(secrets.randbelow(900000) + 100000)
+            # Generate brand new cryptographically secure 6-digit numeric OTP
+            code = f"{secrets.randbelow(900000) + 100000:06d}"
             expires_at = timezone.now() + timedelta(minutes=cls.EXPIRY_MINUTES)
-            otp_record = EmailOTP.objects.create(
+            EmailOTP.objects.create(
                 email=email,
                 otp_code=code,
                 purpose=purpose,
@@ -191,29 +177,29 @@ class OTPService:
         }
         purpose_text = purpose_labels.get(purpose, 'confirm your request')
 
-        # Dispatch email asynchronously in background thread so the HTTP API returns immediately (< 50ms)
-        dispatch_thread = threading.Thread(
-            target=_dispatch_otp_email,
-            args=(email, code, purpose, recipient_name, purpose_text),
-            daemon=True
-        )
-        dispatch_thread.start()
+        # Direct synchronous dispatch guarantees Google accepts the message
+        email_sent = _dispatch_otp_email(email, code, purpose, recipient_name, purpose_text)
 
         # Terminal feedback
         print(f"\n==========================================")
-        print(f"[FINNEST REAL OTP DISPATCHED (Background Thread)]")
+        print(f"[FINNEST REAL OTP DISPATCH]")
         print(f"To: {email}")
         print(f"Purpose: {purpose}")
         print(f"Code: {code} (Expires in {cls.EXPIRY_MINUTES}m)")
+        print(f"Delivery: {'SUCCESS' if email_sent else 'FAILED'}")
         print(f"==========================================\n")
 
-        return {
+        res_data = {
             'email': email,
             'purpose': purpose,
             'expires_in_minutes': cls.EXPIRY_MINUTES,
-            'email_sent': True,
-            'email_error': None,
+            'email_sent': email_sent,
+            'email_error': None if email_sent else 'Failed to send verification email via Gmail SMTP',
         }
+        if getattr(settings, 'DEBUG', False):
+            res_data['debug_otp'] = code
+
+        return res_data
 
     @classmethod
     def verify_otp(cls, email: str, otp_code: str, purpose: str = 'register'):

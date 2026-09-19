@@ -30,6 +30,7 @@ export const RegisterPage = () => {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [resendSuccess, setResendSuccess] = useState(false);
+  const [devOtp, setDevOtp] = useState('');
 
   // Strong password rule checks
   const pass = formData.password;
@@ -60,14 +61,22 @@ export const RegisterPage = () => {
       const res = await api.post('/auth/register/', cleanPayload);
       setRegisteredEmail(res.data.email || cleanPayload.email);
       setEmailSent(Boolean(res.data.email_sent));
+      if (res.data.debug_otp) {
+        setDevOtp(res.data.debug_otp);
+      }
       setStep(2);
     } catch (err) {
-      setFormError(
-        err.response?.data?.password?.[0] ||
-        err.response?.data?.email?.[0] ||
-        err.response?.data?.detail ||
-        'Registration failed. Please check inputs.'
-      );
+      const emailError = err.response?.data?.email?.[0];
+      if (emailError && emailError.toLowerCase().includes('already exists')) {
+        setFormError('already_exists');
+      } else {
+        setFormError(
+          err.response?.data?.password?.[0] ||
+          emailError ||
+          err.response?.data?.detail ||
+          'Registration failed. Please check inputs.'
+        );
+      }
     } finally {
       setFormLoading(false);
     }
@@ -102,10 +111,13 @@ export const RegisterPage = () => {
     setOtpError('');
     setResendSuccess(false);
     try {
-      await api.post('/auth/send-otp/', {
+      const res = await api.post('/auth/send-otp/', {
         email: registeredEmail.trim().toLowerCase(),
         purpose: 'register',
       });
+      if (res.data.debug_otp) {
+        setDevOtp(res.data.debug_otp);
+      }
       setResendSuccess(true);
       setTimeout(() => setResendSuccess(false), 6000);
     } catch (err) {
@@ -136,11 +148,26 @@ export const RegisterPage = () => {
         {step === 1 ? (
           <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-xl">
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              {formError && (
+              {formError === 'already_exists' ? (
+                <div className="p-3.5 text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 rounded-xl border border-amber-200 dark:border-amber-900 space-y-2">
+                  <div className="font-semibold flex items-center gap-1.5">
+                    <span>⚠️ An account with this email already exists!</span>
+                  </div>
+                  <p className="text-[11px] text-amber-700 dark:text-amber-300">
+                    Your account is already registered. Please sign in directly with your email and password without OTP.
+                  </p>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-1 font-bold text-brand-600 dark:text-brand-400 hover:underline pt-0.5"
+                  >
+                    Go to Sign In Page →
+                  </Link>
+                </div>
+              ) : formError ? (
                 <div className="p-3 text-xs bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900">
                   {formError}
                 </div>
-              )}
+              ) : null}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -313,6 +340,19 @@ export const RegisterPage = () => {
                 Please check your Inbox (or Spam folder). If using the Gmail mobile app, swipe down to refresh.
               </p>
             </div>
+
+            {devOtp && (
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between gap-2">
+                <span>⚡ <strong>Dev/Testing Code:</strong> <code className="font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 tracking-wider text-sm">{devOtp}</code></span>
+                <button
+                  type="button"
+                  onClick={() => handleVerifyOTP(devOtp)}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] transition-colors shadow-sm shrink-0"
+                >
+                  Auto-Verify
+                </button>
+              </div>
+            )}
 
             <OTPInput
               length={6}
