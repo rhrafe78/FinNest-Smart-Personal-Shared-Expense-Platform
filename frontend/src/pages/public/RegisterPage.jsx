@@ -66,11 +66,25 @@ export const RegisterPage = () => {
       if (emailError && emailError.toLowerCase().includes('already exists')) {
         setFormError('already_exists');
       } else {
+        const resData = err.response?.data;
+        let errMsg = '';
+        if (typeof resData === 'string') {
+          errMsg = err.response?.status >= 500 ? 'Server is updating, please retry in a moment.' : resData;
+        } else if (resData && typeof resData === 'object') {
+          errMsg =
+            resData.password?.[0] ||
+            emailError ||
+            resData.username?.[0] ||
+            resData.detail ||
+            resData.non_field_errors?.[0] ||
+            resData.message ||
+            (Array.isArray(Object.values(resData)[0]) ? Object.values(resData)[0][0] : null);
+        }
         setFormError(
-          err.response?.data?.password?.[0] ||
-          emailError ||
-          err.response?.data?.detail ||
-          'Registration failed. Please check inputs.'
+          errMsg ||
+          (err.response?.status >= 500
+            ? 'Server is updating, please retry in a few moments.'
+            : 'Registration failed. Please check inputs.')
         );
       }
     } finally {

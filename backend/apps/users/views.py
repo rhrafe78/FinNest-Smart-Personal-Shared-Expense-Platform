@@ -23,17 +23,26 @@ class RegisterView(APIView):
         # If user already exists, update their password & name and issue fresh OTP
         existing_user = User.objects.filter(email__iexact=email).first() if email else None
         if existing_user:
+            user = existing_user
             if request.data.get('password'):
                 try:
                     validate_password_strength(request.data['password'])
                 except Exception as e:
-                    return Response({'password': [str(e.detail[0] if hasattr(e, 'detail') else e)]}, status=status.HTTP_400_BAD_REQUEST)
-                existing_user.set_password(request.data['password'])
-            existing_user.first_name = request.data.get('first_name', existing_user.first_name)
-            existing_user.last_name = request.data.get('last_name', existing_user.last_name)
-            existing_user.save()
+                    detail_msg = e.detail[0] if (hasattr(e, 'detail') and isinstance(e.detail, list) and e.detail) else str(e)
+                    return Response({'password': [detail_msg]}, status=status.HTTP_400_BAD_REQUEST)
+                user.set_password(request.data['password'])
+            user.first_name = request.data.get('first_name', user.first_name)
+            user.last_name = request.data.get('last_name', user.last_name)
+            user.save()
+            currency = request.data.get('currency', 'USD')
+            if currency and hasattr(user, 'profile'):
+                user.profile.currency = currency
+                user.profile.save()
             origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
-            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
+            try:
+                otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
+            except Exception as e_otp:
+                otp_info = {'email_sent': False, 'email_error': str(e_otp)}
             return Response({
                 'user': UserSerializer(user).data,
                 'email': user.email,
@@ -46,7 +55,10 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
-            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
+            try:
+                otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
+            except Exception as e_otp:
+                otp_info = {'email_sent': False, 'email_error': str(e_otp)}
             resp = {
                 'user': UserSerializer(user).data,
                 'email': user.email,
