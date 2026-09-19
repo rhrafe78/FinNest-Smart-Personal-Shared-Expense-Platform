@@ -14,10 +14,10 @@ class OTPService:
     MAX_ATTEMPTS = 5
 
     @classmethod
-    def generate_and_send_otp(cls, email: str, purpose: str = 'register'):
+    def generate_and_send_otp(cls, email: str, purpose: str = 'register', origin: str = None):
         """
         Generates a 6-digit numeric OTP, stores it in the database,
-        and sends it asynchronously to the user's email address.
+        and sends it to the user's email address.
         """
         email = email.strip().lower()
 
@@ -120,7 +120,44 @@ class OTPService:
         email_sent = False
         email_error = None
 
-        # 1. Check Brevo HTTP API (Port 443 HTTPS - recommended for Render Free Tier)
+        # 1. Check Vercel HTTPS Email Relay (Port 443 HTTPS -> Vercel Serverless Nodemailer Port 465 SSL)
+        # This sends directly from thefinnest22@gmail.com to ANY recipient without restrictions!
+        relay_candidates = []
+        if origin and str(origin).startswith('http') and 'localhost' not in str(origin) and '127.0.0.1' not in str(origin):
+            relay_candidates.append(str(origin).rstrip('/'))
+        frontend_url = getattr(settings, 'FRONTEND_URL', None) or os.getenv('FRONTEND_URL')
+        if frontend_url and str(frontend_url).startswith('http') and 'localhost' not in str(frontend_url):
+            clean_fe = str(frontend_url).rstrip('/')
+            if clean_fe not in relay_candidates:
+                relay_candidates.append(clean_fe)
+
+        for relay_base in relay_candidates:
+            if email_sent:
+                break
+            try:
+                payload = {
+                    "to": email,
+                    "subject": subject,
+                    "html": html_message,
+                    "text": plain_message
+                }
+                req = urllib.request.Request(
+                    f"{relay_base}/api/send-email",
+                    data=json.dumps(payload).encode('utf-8'),
+                    headers={
+                        "Content-Type": "application/json",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FinNest/1.0"
+                    },
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    if resp.status in (200, 201):
+                        email_sent = True
+                        print(f"[VERCEL RELAY EMAIL SUCCESS] To: {email} | Code: {code} via {relay_base}")
+            except Exception as e_relay:
+                print(f"[VERCEL RELAY ERROR {relay_base}] {e_relay}")
+
+        # 2. Check Brevo HTTP API (Port 443 HTTPS - recommended for Render Free Tier)
         brevo_key = os.getenv('BREVO_API_KEY', getattr(settings, 'BREVO_API_KEY', '')).strip()
         if brevo_key:
             try:

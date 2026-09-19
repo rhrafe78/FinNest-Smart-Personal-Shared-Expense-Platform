@@ -32,8 +32,8 @@ class RegisterView(APIView):
             existing_user.first_name = request.data.get('first_name', existing_user.first_name)
             existing_user.last_name = request.data.get('last_name', existing_user.last_name)
             existing_user.save()
-            user = existing_user
-            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register')
+            origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
+            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
             return Response({
                 'user': UserSerializer(user).data,
                 'email': user.email,
@@ -45,7 +45,8 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register')
+            origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
+            otp_info = OTPService.generate_and_send_otp(user.email, purpose='register', origin=origin)
             resp = {
                 'user': UserSerializer(user).data,
                 'email': user.email,
@@ -73,7 +74,8 @@ class SendOTPView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            res = OTPService.generate_and_send_otp(email, purpose=purpose)
+            origin = request.META.get('HTTP_ORIGIN') or request.META.get('HTTP_REFERER')
+            res = OTPService.generate_and_send_otp(email, purpose=purpose, origin=origin)
             resp = {
                 'message': f'A 6-digit verification code has been sent to your Gmail ({email}).',
                 'email': email,
