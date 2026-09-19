@@ -123,7 +123,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
   const handleQuickCreateHousehold = async (e) => {
     if (e) e.preventDefault();
     if (!quickHouseholdName.trim()) {
-      setError('অনুগ্রহ করে মেস বা বাসার নাম লিখুন।');
+      setError('Please provide a household name.');
       return;
     }
     setCreatingHousehold(true);
@@ -153,7 +153,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
         setParticipantsMap(initMap);
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'মেস তৈরি করতে ব্যর্থ হয়েছে।');
+      setError(err.response?.data?.detail || 'Failed to create household.');
     } finally {
       setCreatingHousehold(false);
     }
@@ -179,7 +179,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
     setError('');
 
     if (!selectedHouseholdId) {
-      setError('অনুগ্রহ করে প্রথমে একটি মেস বা বাসা নির্বাচন করুন।');
+      setError('Please select a household first.');
       return;
     }
 
@@ -284,7 +284,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editExpense ? "মেসের খরচ পরিবর্তন করুন (Edit Shared Expense)" : "মেসের শেয়ার্ড খরচ যোগ করুন (Add Shared Expense)"}
+      title={editExpense ? "Edit Shared Expense" : "Add Shared Household Expense"}
       maxWidth="max-w-xl"
     >
       {/* CASE 1: USER HAS NO HOUSEHOLD YET */}
@@ -295,21 +295,21 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
           </div>
           <div className="space-y-1">
             <h4 className="text-base font-bold text-slate-900 dark:text-white">
-              আপনার এখনও কোনো মেস বা ফ্ল্যাট যুক্ত করা নেই!
+              No household added yet!
             </h4>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              বাসা ভাড়া, বিদ্যুৎ, গ্যাস, ওয়াইফাই বা মেস বাজারের হিসাব রাখতে প্রথমে একটি মেস তৈরি করুন।
+              Create a household to split rent, groceries, wifi, and utility bills with roommates.
             </p>
           </div>
 
           <div className="pt-2 max-w-md mx-auto space-y-3 text-left">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1">
-                মেস বা বাসার নাম (Household / Mess Name)
+                Household Name
               </label>
               <input
                 type="text"
-                placeholder="যেমন: ধানমন্ডি মেস, গ্রিন ভিউ ফ্ল্যাট, বা ফ্যামিলি হোম"
+                placeholder="e.g. Dhanmondi Flat, Green View Apartment, or Bachelor Pad"
                 value={quickHouseholdName}
                 onChange={(e) => setQuickHouseholdName(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
@@ -329,7 +329,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
               isLoading={creatingHousehold}
               onClick={handleQuickCreateHousehold}
             >
-              + মেস তৈরি করুন এবং খরচ লিখুন
+              + Create Household & Add Expense
             </Button>
           </div>
         </div>
@@ -346,14 +346,14 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                Household / Mess (মেস নির্বাচন)
+                Select Household
               </label>
               <button
                 type="button"
                 onClick={() => setShowQuickCreate(!showQuickCreate)}
                 className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
               >
-                <Plus className="w-3.5 h-3.5" /> নতুন মেস তৈরি
+                <Plus className="w-3.5 h-3.5" /> New Household
               </button>
             </div>
 
@@ -361,17 +361,17 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2 mb-2">
                 <input
                   type="text"
-                  placeholder="নতুন মেসের নাম (e.g. ধানমন্ডি ফ্ল্যাট)"
+                  placeholder="New household name (e.g. Dhanmondi Flat)"
                   value={quickHouseholdName}
                   onChange={(e) => setQuickHouseholdName(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
                 />
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" size="sm" onClick={() => setShowQuickCreate(false)}>
-                    বাতিল
+                    Cancel
                   </Button>
                   <Button type="button" variant="primary" size="sm" isLoading={creatingHousehold} onClick={handleQuickCreateHousehold}>
-                    তৈরি করুন
+                    Create
                   </Button>
                 </div>
               </div>
@@ -392,24 +392,24 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                খরচের নাম বা বিষয় (Title)
+                Expense Title / Description
               </label>
               <input
                 type="text"
                 required
-                placeholder="কীসের খরচ? যেমন: চাল-ডাল বাজার, ডিম-দুধ, কারেন্ট বিল"
+                placeholder="e.g. Weekly Groceries, Electricity Bill, Wifi, Cooking Oil"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
               <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
-                (এটা কোনো কোড না; সাধারণ ভাষায় লিখুন টাকাটা কীসের জন্য খরচ হয়েছে)
+                (Describe what the purchase was for)
               </p>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                ক্যাটাগরি (Category)
+                Category
               </label>
               <select
                 value={formData.category}
@@ -418,17 +418,17 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
               >
                 {categories.map((c) => {
                   const labels = {
-                    'Rent': '🏠 বাসা ভাড়া (Rent)',
-                    'Electricity': '⚡ বিদ্যুৎ বিল (Electricity)',
-                    'Gas': '🔥 গ্যাস বিল (Gas Bill)',
-                    'Water': '💧 পানি বিল (Water Bill)',
-                    'Wi-Fi': '📶 ওয়াই-ফাই বিল (Wi-Fi Bill)',
-                    'Grocery': '🛒 মেস বাজার / মুদি (Grocery)',
-                    'Cleaning': '🧹 খালা ও ক্লিনিং (Cleaning)',
-                    'Maintenance': '🔧 সার্ভিস চার্জ ও মেরামত (Maintenance)',
-                    'Food': '🍔 খাবার ও মিল (Food & Meal)',
-                    'Transportation': '🚌 যাতায়াত (Transportation)',
-                    'Other': '📦 অন্যান্য খরচ (Other)',
+                    'Rent': '🏠 Rent',
+                    'Electricity': '⚡ Electricity',
+                    'Gas': '🔥 Gas Bill',
+                    'Water': '💧 Water Bill',
+                    'Wi-Fi': '📶 Wi-Fi Bill',
+                    'Grocery': '🛒 Groceries',
+                    'Cleaning': '🧹 Cleaning & Maid',
+                    'Maintenance': '🔧 Maintenance & Service',
+                    'Food': '🍔 Meals & Dining',
+                    'Transportation': '🚌 Transportation',
+                    'Other': '📦 Other',
                   };
                   return <option key={c} value={c}>{labels[c] || c}</option>;
                 })}
@@ -440,7 +440,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                মোট খরচের টাকা (৳) <span className="text-rose-500">*</span>
+                Total Amount (৳) <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">৳</span>
@@ -474,7 +474,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                কে টাকা পরিশোধ করেছে? (Payer)
+                Paid By (Payer)
               </label>
               <select
                 value={formData.paid_by}
@@ -485,18 +485,18 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
                 {members.length > 0 ? (
                   members.map((m) => (
                     <option key={m.user.id} value={m.user.id}>
-                      {m.user.full_name || m.user.username} {m.user.id === user?.id ? '(আপনি / You)' : ''}
+                      {m.user.full_name || m.user.username} {m.user.id === user?.id ? '(You)' : ''}
                     </option>
                   ))
                 ) : (
-                  <option value={user?.id}>{user?.full_name || user?.username || 'You'} (আপনি)</option>
+                  <option value={user?.id}>{user?.full_name || user?.username || 'You'} (You)</option>
                 )}
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                খরচের তারিখ
+                Expense Date
               </label>
               <input
                 type="date"
@@ -514,12 +514,12 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
               <div className="space-y-0.5">
                 <div className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  মেসের সকল ({members.length} জন) সদস্যের মাঝে সমান ভাগ হবে
+                  Split equally among all ({members.length}) members
                 </div>
                 <div className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80">
                   {formData.amount && parseFloat(formData.amount) > 0 && members.length > 0
-                    ? `💡 জনপ্রতি খরচ পড়বে: ৳ ${(parseFloat(formData.amount) / members.length).toFixed(2)}`
-                    : 'টাকা লিখলে স্বয়ংক্রিয়ভাবে সবার সমান ভাগ হিসাব হবে'}
+                    ? `💡 Per person share: ৳ ${(parseFloat(formData.amount) / members.length).toFixed(2)}`
+                    : 'Enter amount to automatically calculate equal member shares'}
                 </div>
               </div>
               <button
@@ -529,14 +529,14 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
                 }}
                 className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline shrink-0"
               >
-                ⚙️ কাস্টম বা আলাদা ভাগ চান?
+                ⚙️ Need custom or unequal split?
               </button>
             </div>
           ) : (
             <div className="space-y-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  কাস্টম ভাগ করার নিয়ম (Custom Split)
+                  Custom Split Method
                 </label>
                 <button
                   type="button"
@@ -546,16 +546,16 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
                   }}
                   className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
                 >
-                  ✓ সবার মাঝে সমান ভাগ করুন
+                  ✓ Split Equally Among All Members
                 </button>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { id: 'EQUAL', label: 'সমান ভাগ (Equal)', icon: Divide },
-                  { id: 'EXACT', label: 'নির্দিষ্ট টাকা (Exact)', icon: Calculator },
-                  { id: 'PERCENTAGE', label: 'শতাংশ (%)', icon: Percent },
-                  { id: 'SHARES', label: 'শেয়ার অনুপাত', icon: Users },
+                  { id: 'EQUAL', label: 'Equal Split', icon: Divide },
+                  { id: 'EXACT', label: 'Exact Amounts', icon: Calculator },
+                  { id: 'PERCENTAGE', label: 'Percentages (%)', icon: Percent },
+                  { id: 'SHARES', label: 'Share Ratios', icon: Users },
                 ].map((method) => {
                   const Icon = method.icon;
                   const active = formData.split_method === method.id;
@@ -598,7 +598,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
                         />
                         <div>
                           <div className="text-xs font-bold text-slate-900 dark:text-white">
-                            {m.user.full_name || m.user.username} {m.user.id === user?.id ? '(আপনি)' : ''}
+                            {m.user.full_name || m.user.username} {m.user.id === user?.id ? '(You)' : ''}
                           </div>
                         </div>
                       </label>
@@ -644,7 +644,7 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
                                 onChange={(e) => handleSplitParticipantChange(m.user.id, 'shares', e.target.value)}
                                 className="w-16 px-2 py-1 text-xs text-center font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900"
                               />
-                              <span className="text-[10px] text-slate-400">ভাগ</span>
+                              <span className="text-[10px] text-slate-400">share</span>
                             </div>
                           )}
                         </div>
@@ -658,11 +658,11 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-              নোট বা অতিরিক্ত তথ্য (Optional)
+              Notes / Additional Details (Optional)
             </label>
             <textarea
               rows={2}
-              placeholder="খরচের কোনো বিশেষ নোট..."
+              placeholder="Special notes or memo..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -671,10 +671,10 @@ export const AddSharedExpenseModal = ({ isOpen, onClose, onSuccess, initialHouse
 
           <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
             <Button type="button" variant="outline" size="sm" onClick={onClose}>
-              বাতিল
+              Cancel
             </Button>
             <Button type="submit" variant="primary" size="sm" isLoading={loading} className="font-bold">
-              {editExpense ? "খরচ আপডেট করুন (Update Expense)" : "মেসের খরচ সংরক্ষণ করুন"}
+              {editExpense ? "Update Expense" : "Save Shared Expense ✓"}
             </Button>
           </div>
         </form>

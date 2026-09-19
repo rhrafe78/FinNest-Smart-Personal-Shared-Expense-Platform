@@ -143,10 +143,10 @@ export const GroceriesPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Mess Grocery & Market Bazaar (মেস বাজার লিস্ট)
+            Household Groceries & Shopping Lists
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            রুমমেটদের সাথে মেসের বাজারের চেকলিস্ট ও ১-ক্লিকে শেয়ার্ড খরচে রূপান্তরের সুবিধা।
+            Collaborative grocery checklists with flatmates and 1-tap split expense conversion.
           </p>
         </div>
 
@@ -174,7 +174,7 @@ export const GroceriesPage = () => {
               icon={Plus}
               onClick={() => setShowCreateHouseholdModal(true)}
             >
-              + মেস তৈরি করুন
+              + Create Household
             </Button>
           )}
         </div>
@@ -187,15 +187,15 @@ export const GroceriesPage = () => {
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              আপনার কোনো মেস বা ফ্ল্যাট যুক্ত নেই
+              No Household Found
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              সাপ্তাহিক বা মাসিক মেস বাজার তালিকা তৈরি করার জন্য প্রথমে একটি মেস তৈরি করুন।
+              Create or join a household to start managing shared groceries with roommates.
             </p>
           </div>
           <div className="pt-2">
             <Button variant="primary" icon={Plus} onClick={() => setShowCreateHouseholdModal(true)}>
-              + মেস তৈরি করুন
+              + Create Household
             </Button>
           </div>
         </div>
@@ -206,11 +206,11 @@ export const GroceriesPage = () => {
       ) : groceryLists.length === 0 ? (
         <div className="p-12 text-center rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] space-y-3">
           <ShoppingCart className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-base font-bold text-slate-700 dark:text-slate-300">কোনো বাজার তালিকা নেই</h3>
-          <p className="text-xs text-slate-500">আপনার মেস রুমমেটদের জন্য একটি সাপ্তাহিক বাজার লিস্ট তৈরি করুন।</p>
+          <h3 className="text-base font-bold text-slate-700 dark:text-slate-300">No grocery lists created yet</h3>
+          <p className="text-xs text-slate-500">Create a weekly grocery checklist for your roommates.</p>
           <div className="pt-2">
             <Button variant="outline" size="sm" icon={Plus} onClick={() => setShowNewListModal(true)}>
-              নতুন বাজার লিস্ট তৈরি করুন
+              Create Grocery List
             </Button>
           </div>
         </div>

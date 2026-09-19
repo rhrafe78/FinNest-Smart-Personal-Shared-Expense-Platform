@@ -14,22 +14,22 @@ export const PublicLayout = () => {
   const location = useLocation();
 
   const navLinks = [
-    { name: 'ফিচারসমূহ', path: '/features' },
-    { name: 'কীভাবে কাজ করে', path: '/how-it-works' },
-    { name: 'প্রাইসিং', path: '/pricing' },
-    { name: 'আমাদের সম্পর্কে', path: '/about' },
-    { name: 'যোগাযোগ', path: '/contact' },
+    { name: 'Features', path: '/features' },
+    { name: 'How It Works', path: '/how-it-works' },
+    { name: 'Pricing', path: '/pricing' },
+    { name: 'About', path: '/about' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-800 dark:text-slate-100 selection:bg-brand-600 selection:text-white relative">
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-slate-800/80 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <Logo size="md" />
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-600 dark:text-slate-300">
+          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-600 dark:text-slate-300">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -44,7 +44,7 @@ export const PublicLayout = () => {
           </nav>
 
           {/* Action CTAs & Theme Toggle */}
-          <div className="hidden md:flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-3">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
@@ -56,19 +56,19 @@ export const PublicLayout = () => {
             {isAuthenticated ? (
               <Link to="/app/dashboard">
                 <Button variant="primary" size="sm" className="font-semibold text-xs px-4 py-2">
-                  ড্যাশবোর্ডে যান <ArrowRight className="w-4 h-4 ml-1" />
+                  Go to Dashboard <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="sm" className="font-semibold text-xs">
-                    লগইন
+                  <Button variant="ghost" size="sm" className="font-semibold text-xs px-3">
+                    Log in
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button variant="primary" size="sm" className="font-semibold text-xs px-4 py-2">
-                    ফ্রি অ্যাকাউন্ট খুলুন
+                    Get Started Free
                   </Button>
                 </Link>
               </>
@@ -109,19 +109,19 @@ export const PublicLayout = () => {
               {isAuthenticated ? (
                 <Link to="/app/dashboard" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" className="w-full text-xs font-semibold">
-                    ড্যাশবোর্ডে যান
+                    Go to Dashboard
                   </Button>
                 </Link>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="outline" className="w-full text-xs font-semibold">
-                      লগইন
+                      Log in
                     </Button>
                   </Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="primary" className="w-full text-xs font-semibold">
-                      ফ্রি অ্যাকাউন্ট খুলুন
+                      Get Started Free
                     </Button>
                   </Link>
                 </>

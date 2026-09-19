@@ -81,7 +81,7 @@ export const AddIncomeModal = ({ isOpen, onClose, onSuccess, editIncome = null }
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editIncome ? "আয় এডিট করুন (Edit Income)" : "আয় / স্যালারি যোগ (Add Personal Income)"}
+      title={editIncome ? "Edit Income Record" : "Add Income & Salary"}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (

@@ -33,18 +33,18 @@ export const BillsPage = () => {
       await api.post(`/bills/${billId}/mark-paid/`);
       fetchBills();
     } catch (err) {
-      alert('বিল পরিশোধিত মার্ক করতে সমস্যা হয়েছে।');
+      alert('Failed to mark bill as paid.');
     }
   };
 
   const curr = currency === 'BDT' ? '৳' : currency === 'USD' ? '$' : '৳';
 
   const filterTabs = [
-    { id: '', label: 'সকল বিল' },
-    { id: 'due_soon', label: 'দ্রুত প্রদেয় (≤ ৩ দিন)' },
-    { id: 'upcoming', label: 'আসন্ন' },
-    { id: 'overdue', label: 'বকেয়া' },
-    { id: 'paid', label: 'পরিশোধিত' },
+    { id: '', label: 'All Bills' },
+    { id: 'due_soon', label: 'Due Soon (≤ 3 days)' },
+    { id: 'upcoming', label: 'Upcoming' },
+    { id: 'overdue', label: 'Overdue' },
+    { id: 'paid', label: 'Paid' },
   ];
 
   return (
@@ -53,10 +53,10 @@ export const BillsPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            মাসিক ইউটিলিটি ও বিল
+            Recurring Bills & Utilities
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            বাসা ভাড়া, ওয়াই-ফাই, বিদ্যুৎ ও মেসের নিয়মিত বিলের সময়মতো ট্র্যাকিং।
+            Track and manage rent, wifi, electricity, and shared recurring bills with ease.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export const BillsPage = () => {
           onClick={() => setShowAddModal(true)}
           className="text-xs shadow-sm shadow-brand-500/25"
         >
-          + নতুন বিল যুক্ত করুন
+          + Add New Bill
         </Button>
       </div>
 
@@ -91,7 +91,7 @@ export const BillsPage = () => {
       {loading ? (
         <div className="p-16 text-center text-slate-400 text-xs space-y-3">
           <div className="w-7 h-7 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p>বিলের তালিকা লোড হচ্ছে...</p>
+          <p>Loading bills...</p>
         </div>
       ) : bills.length === 0 ? (
         <div className="fin-card p-16 text-center space-y-4">
@@ -100,15 +100,15 @@ export const BillsPage = () => {
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
-              কোনো বিল পাওয়া যায়নি
+              No bills found
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              আপনার বাসা ভাড়া বা ইউটিলিটি বিল যুক্ত করে সময়মতো নোটিফিকেশন পান।
+              Set up your rent or recurring utility bills to receive timely reminders.
             </p>
           </div>
           <div className="pt-2">
             <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowAddModal(true)}>
-              প্রথম বিল যোগ করুন
+              Add First Bill
             </Button>
           </div>
         </div>
@@ -129,7 +129,7 @@ export const BillsPage = () => {
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        {bill.household_name ? `মেস: ${bill.household_name}` : 'ব্যক্তিগত বিল'}
+                        {bill.household_name ? `Household: ${bill.household_name}` : 'Personal Bill'}
                       </span>
                       <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
                         {bill.name}
@@ -142,7 +142,7 @@ export const BillsPage = () => {
                       }
                       className="text-[11px]"
                     >
-                      {isPaid ? 'পরিশোধিত' : isOverdue ? 'বকেয়া' : isDueSoon ? 'জরুরি' : 'আসন্ন'}
+                      {isPaid ? 'Paid' : isOverdue ? 'Overdue' : isDueSoon ? 'Due Soon' : 'Upcoming'}
                     </Badge>
                   </div>
 
@@ -152,18 +152,18 @@ export const BillsPage = () => {
 
                   <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1 text-xs text-slate-500">
                     <div className="flex justify-between">
-                      <span>পরিশোধের শেষ তারিখ:</span>
+                      <span>Due Date:</span>
                       <span className="font-semibold text-slate-900 dark:text-white font-mono">{bill.due_date}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>ধরণ:</span>
+                      <span>Frequency:</span>
                       <span className="capitalize text-slate-700 dark:text-slate-300">
-                        {bill.recurrence === 'monthly' ? 'মাসিক' : bill.recurrence === 'yearly' ? 'বাৎসরিক' : 'এককালীন'}
+                        {bill.recurrence === 'monthly' ? 'Monthly' : bill.recurrence === 'yearly' ? 'Yearly' : 'One-time'}
                       </span>
                     </div>
                     {bill.responsible_person_detail && (
                       <div className="flex justify-between">
-                        <span>দায়িত্বে:</span>
+                        <span>Assigned To:</span>
                         <span className="font-semibold text-brand-600 dark:text-brand-400">
                           {bill.responsible_person_detail.full_name}
                         </span>
@@ -181,7 +181,7 @@ export const BillsPage = () => {
                       icon={CheckCircle2}
                       onClick={() => handleMarkPaid(bill.id)}
                     >
-                      পরিশোধিত হিসেবে মার্ক করুন
+                      Mark as Paid ✓
                     </Button>
                   </div>
                 )}

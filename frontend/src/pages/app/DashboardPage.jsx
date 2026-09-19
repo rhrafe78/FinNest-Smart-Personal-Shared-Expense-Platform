@@ -119,7 +119,7 @@ export const DashboardPage = () => {
       setDeleteTarget(null);
       fetchDashboardData();
     } catch (err) {
-      alert('মুছে ফেলতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      alert('Failed to delete item. Please try again.');
     } finally {
       setDeleting(false);
     }
@@ -142,7 +142,7 @@ export const DashboardPage = () => {
       }
     } catch (err) {
       console.error('Failed to load dashboard:', err);
-      setFetchError('ড্যাশবোর্ড ডেটা লোড হতে সমস্যা হয়েছে। সার্ভার সংযোগ পরীক্ষা করুন।');
+      setFetchError('Failed to load dashboard data. Please check your connection.');
     }
 
     try {
@@ -200,10 +200,10 @@ export const DashboardPage = () => {
         <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto shadow-lg">
           <AlertTriangle className="w-8 h-8" />
         </div>
-        <h3 className="text-xl font-black text-slate-900 dark:text-white">ডেটা লোড করা যায়নি</h3>
+        <h3 className="text-xl font-black text-slate-900 dark:text-white">Unable to Load Data</h3>
         <p className="text-sm text-slate-500 dark:text-slate-400">{fetchError}</p>
         <Button variant="primary" onClick={fetchDashboardData} icon={RefreshCw} className="mx-auto font-bold">
-          পুনরায় চেষ্টা করুন (Retry)
+          Retry
         </Button>
       </div>
     );
@@ -247,17 +247,6 @@ export const DashboardPage = () => {
   const salaryNum = parseFloat(salary.effective_income || '0');
   const spentPct = salary.spent_pct || 0;
 
-  const [activeTxTab, setActiveTxTab] = useState('all'); // 'all' | 'today'
-
-  const handleQuickExpense = (merchant, defaultAmount) => {
-    setEditExpenseItem({
-      merchant,
-      amount: defaultAmount,
-      date: new Date().toISOString().split('T')[0],
-    });
-    setShowExpenseModal(true);
-  };
-
   return (
     <div className="space-y-8 sm:space-y-10 max-w-5xl mx-auto">
       {/* 1. Natural, Frameless Header (Spacious & Clean) */}
@@ -265,13 +254,13 @@ export const DashboardPage = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium mb-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-subtle" />
-            <span>{daily.today_date_formatted || 'আজকের দিন'}</span>
+            <span>{daily.today_date_formatted || 'Today'}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            স্বাগতম, {user?.first_name || user?.username || 'ইউজার'}!
+            Welcome back, {user?.first_name || user?.username || 'User'}!
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            আপনার আজকের আর্থিক অবস্থা ও মেসের হিসাব এক নজরে
+            Your real-time wallet balance and shared mess overview.
           </p>
         </div>
 
@@ -287,7 +276,7 @@ export const DashboardPage = () => {
             }}
             className="text-xs font-semibold px-4 py-2.5 shadow-sm"
           >
-            খরচ লিখুন
+            Add Expense
           </Button>
           <Button
             variant="outline"
@@ -296,7 +285,7 @@ export const DashboardPage = () => {
             onClick={() => setShowSharedModal(true)}
             className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/30 dark:bg-indigo-950/20 px-4 py-2.5"
           >
-            মেসের খরচ
+            Shared Split
           </Button>
           <Button
             variant="secondary"
@@ -308,12 +297,12 @@ export const DashboardPage = () => {
             }}
             className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 py-2.5"
           >
-            আয় যোগ
+            Add Income
           </Button>
           <button
             onClick={() => setShowSettingsModal(true)}
             className="p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
-            title="মাসিক স্যালারি ও দৈনিক টার্গেট পরিবর্তন"
+            title="Adjust monthly salary and daily target"
           >
             <Edit3 className="w-4 h-4" />
           </button>
@@ -328,7 +317,7 @@ export const DashboardPage = () => {
       }`}>
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            চলতি মাসে হাতে অবশিষ্ট ব্যালেন্স
+            Remaining Cash Balance This Month
           </span>
           <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
             salary.is_overspent
@@ -336,7 +325,7 @@ export const DashboardPage = () => {
               : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${salary.is_overspent ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-            <span>{salary.is_overspent ? 'বাজেট শেষ / ঘাটতি' : 'ব্যালেন্স নিরাপদ'}</span>
+            <span>{salary.is_overspent ? 'Budget Exceeded' : 'On Track'}</span>
           </span>
         </div>
 
@@ -361,8 +350,8 @@ export const DashboardPage = () => {
             />
           </div>
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium pt-1">
-            <span>মাসিক বেতন: <strong className="text-slate-700 dark:text-slate-300 font-mono font-semibold">{curr} {parseFloat(salary.monthly_salary || '0').toLocaleString()}</strong></span>
-            <span>মোট খরচ: <strong className="text-rose-600 dark:text-rose-400 font-mono font-semibold">{curr} {parseFloat(salary.total_spent_this_month || '0').toLocaleString()}</strong> ({spentPct.toFixed(0)}%)</span>
+            <span>Monthly Salary: <strong className="text-slate-700 dark:text-slate-300 font-mono font-semibold">{curr} {parseFloat(salary.monthly_salary || '0').toLocaleString()}</strong></span>
+            <span>Total Spent: <strong className="text-rose-600 dark:text-rose-400 font-mono font-semibold">{curr} {parseFloat(salary.total_spent_this_month || '0').toLocaleString()}</strong> ({spentPct.toFixed(0)}%)</span>
           </div>
         </div>
       </div>
@@ -371,15 +360,15 @@ export const DashboardPage = () => {
       <div className="space-y-2.5 animate-fade-in-delayed">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
           <Zap className="w-3.5 h-3.5 text-amber-500" />
-          <span>১-ট্যাপে দ্রুত খরচ এন্ট্রি:</span>
+          <span>Quick 1-Tap Expense Entry:</span>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           {[
-            { label: 'চা ও নাস্তা', amount: '40', icon: '☕' },
-            { label: 'দুপুরের খাবার', amount: '130', icon: '🍛' },
-            { label: 'রিকশা / ভাড়া', amount: '50', icon: '🛺' },
-            { label: 'বাজার খরচ', amount: '350', icon: '🛒' },
-            { label: 'ওষুধ', amount: '120', icon: '💊' },
+            { label: 'Coffee & Snacks', amount: '40', icon: '☕' },
+            { label: 'Lunch Meal', amount: '130', icon: '🍛' },
+            { label: 'Commute / Ride', amount: '50', icon: '🛺' },
+            { label: 'Groceries', amount: '350', icon: '🛒' },
+            { label: 'Pharmacy', amount: '120', icon: '💊' },
           ].map((preset) => (
             <button
               key={preset.label}
@@ -401,14 +390,14 @@ export const DashboardPage = () => {
         <div className="p-6 sm:p-7 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0f172a] shadow-subtle hover:shadow-card transition-all duration-200 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              আজকের দিনের মোট খরচ
+              Today\'s Spending
             </span>
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
               daily.is_profit
                 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
                 : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
             }`}>
-              {daily.is_profit ? 'সীমার মধ্যে আছে' : 'টার্গেট পার'}
+              {daily.is_profit ? 'Under Budget' : 'Over Target'}
             </span>
           </div>
 
@@ -434,9 +423,9 @@ export const DashboardPage = () => {
           </div>
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span>দৈনিক বাজেট: <strong className="text-slate-700 dark:text-slate-300 font-mono">{curr} {parseFloat(daily.daily_target || '0').toLocaleString()}</strong></span>
+            <span>Daily Target: <strong className="text-slate-700 dark:text-slate-300 font-mono">{curr} {parseFloat(daily.daily_target || '0').toLocaleString()}</strong></span>
             <span className={`font-semibold ${daily.is_profit ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-              {daily.is_profit ? `+৳${parseFloat(daily.difference || '0').toFixed(0)} বাকি` : `-৳${parseFloat(daily.difference || '0').toFixed(0)} অতিরিক্ত`}
+              {daily.is_profit ? `+৳${parseFloat(daily.difference || '0').toFixed(0)} remaining` : `-৳${parseFloat(daily.difference || '0').toFixed(0)} over`}
             </span>
           </div>
         </div>
@@ -445,10 +434,10 @@ export const DashboardPage = () => {
         <div className="p-6 sm:p-7 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0f172a] shadow-subtle hover:shadow-card transition-all duration-200 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              মেস ও রুমমেট হিসাব
+              Shared Mess Balance
             </span>
             <Link to="/app/households" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
-              মেস হাব <ArrowRight className="w-3.5 h-3.5" />
+              Households Hub <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -471,15 +460,15 @@ export const DashboardPage = () => {
 
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {parseFloat(shared.others_owe_you || '0') > 0
-              ? '🎉 রুমমেটদের কাছে আপনার টাকা পাওনা আছে'
+              ? '🎉 Roommates owe you money for shared bills'
               : parseFloat(shared.you_owe || '0') > 0
-              ? '⚠️ মেসের কাছে আপনার বকেয়া দেনা রয়েছে'
-              : 'সব হিসাব পরিষ্কার (কোনো দেনা-পাওনা নেই)'}
+              ? '⚠️ You have pending balance to settle in your mess'
+              : 'All settled up! No outstanding balance.'}
           </p>
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span>সক্রিয় মেস: <strong className="text-slate-700 dark:text-slate-300">{shared.active_households || 0} টি</strong></span>
-            <span>আসন্ন বিল: <strong className="text-slate-700 dark:text-slate-300">{shared.upcoming_bills || 0} টি</strong></span>
+            <span>Active Groups: <strong className="text-slate-700 dark:text-slate-300">{shared.active_households || 0}</strong></span>
+            <span>Upcoming Bills: <strong className="text-slate-700 dark:text-slate-300">{shared.upcoming_bills || 0}</strong></span>
           </div>
         </div>
       </div>
@@ -489,9 +478,9 @@ export const DashboardPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-4">
           <div>
             <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              লেনদেনের খাতা
+              Activity & Ledger
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">আপনার সাম্প্রতিক আয় ও খরচের তালিকা</p>
+            <p className="text-xs text-slate-400 mt-0.5">Recent personal and shared financial transactions</p>
           </div>
 
           {/* Clean Segmented Tab Control */}
@@ -505,7 +494,7 @@ export const DashboardPage = () => {
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              সব লেনদেন
+              All Activity
             </button>
             <button
               type="button"
@@ -516,7 +505,7 @@ export const DashboardPage = () => {
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              আজকের খরচ ({daily.count || 0})
+              Today\'s Log ({daily.count || 0})
             </button>
           </div>
         </div>
@@ -536,11 +525,11 @@ export const DashboardPage = () => {
                     </div>
                     <div className="truncate">
                       <div className="text-sm font-semibold text-slate-800 dark:text-white truncate">
-                        {item.merchant || item.title || 'খরচ'}
+                        {item.merchant || item.title || 'Expense'}
                       </div>
                       <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
                         <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                          {item.category || 'সাধারণ'}
+                          {item.category || 'General'}
                         </span>
                         <span>{item.date}</span>
                       </div>
@@ -555,14 +544,14 @@ export const DashboardPage = () => {
                       <button
                         onClick={() => handleEditExpense(item)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="সম্পাদনা করুন"
+                        title="Edit expense"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteItem(item.id, 'expense', item.merchant || item.title)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="মুছে ফেলুন"
+                        title="Delete expense"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -575,10 +564,10 @@ export const DashboardPage = () => {
             <div className="py-12 px-4 text-center space-y-2">
               <CheckCircle2 className="w-7 h-7 mx-auto text-emerald-500" />
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                আজকে এখনও কোনো খরচ করা হয়নি
+                No expenses logged today yet
               </p>
               <p className="text-xs text-slate-400">
-                উপরের ১-ট্যাপ চিপস কিংবা "+ খরচ লিখুন" বোতামে চাপ দিয়ে লিখে ফেলুন।
+                Use the 1-tap quick buttons above or click "Add Expense" to record spending.
               </p>
             </div>
           )
@@ -623,14 +612,14 @@ export const DashboardPage = () => {
                       <button
                         onClick={() => handleEditRecent(tx)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="সম্পাদনা করুন"
+                        title="Edit transaction"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteItem(tx.id, tx.type, tx.title)}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="মুছে ফেলুন"
+                        title="Delete transaction"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -643,23 +632,23 @@ export const DashboardPage = () => {
             <div className="py-12 px-4 text-center space-y-2 text-slate-400">
               <Clock className="w-7 h-7 mx-auto text-slate-300 dark:text-slate-600" />
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                এখনও কোনো লেনদেনের রেকর্ড নেই
+                No transaction records found
               </p>
               <p className="text-xs text-slate-400">
-                উপরে "+ খরচ লিখুন" বা "+ আয় যোগ" বোতাম চাপুন।
+                Click "+ Add Expense" or "+ Add Income" above to start your ledger.
               </p>
             </div>
           )
         )}
 
         {/* View All History Link */}
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <span>মোট {data.recent_transactions?.length || 0} টি সাম্প্রতিক রেকর্ড</span>
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span>Showing {safeData.recent_transactions?.length || 0} recent transactions</span>
           <Link
             to="/app/transactions"
             className="font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1"
           >
-            সম্পূর্ণ খরচের খাতা দেখুন <ArrowRight className="w-3.5 h-3.5" />
+            View full ledger <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
@@ -668,12 +657,12 @@ export const DashboardPage = () => {
       <Modal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
-        title="মাসিক স্যালারি ও দৈনিক টার্গেট সেটিং"
+        title="Monthly Salary & Daily Target Settings"
       >
         <form onSubmit={handleSaveSettings} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-              আপনার মূল মাসিক স্যালারি ({curr})
+              Monthly Salary / Total Income ({curr})
             </label>
             <input
               type="number"
@@ -682,16 +671,16 @@ export const DashboardPage = () => {
               placeholder="e.g. 35000"
               value={salaryInput}
               onChange={(e) => setSalaryInput(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
             />
             <p className="text-[11px] text-slate-500 mt-1">
-              এই স্যালারি থেকে প্রতিদিনের ও মাসের সব খরচ বাদ দিয়ে হাতে অবশিষ্ট ক্যাশ হিসাব হবে।
+              Your remaining cash balance is calculated by subtracting your monthly spend from this amount.
             </p>
           </div>
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-              প্রতিদিনের খরচের বাজেট টার্গেট ({curr})
+              Daily Expense Budget Target ({curr})
             </label>
             <input
               type="number"
@@ -700,10 +689,10 @@ export const DashboardPage = () => {
               placeholder="e.g. 500"
               value={targetInput}
               onChange={(e) => setTargetInput(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
             />
             <p className="text-[11px] text-slate-500 mt-1">
-              প্রতিদিন এই পরিমাণের মধ্যে খরচ রাখলে লাভ / সেভ দেখাবে, অতিরিক্ত হলে লস বা অ্যালার্ট দেখাবে।
+              Staying below this daily threshold keeps your finances on track and flags overspending alerts.
             </p>
           </div>
 
@@ -718,7 +707,7 @@ export const DashboardPage = () => {
               }}
               className="text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs"
             >
-              সব ০ করুন (Reset to 0)
+              Reset to 0
             </Button>
             <div className="flex items-center gap-2">
               <Button
@@ -727,7 +716,7 @@ export const DashboardPage = () => {
                 size="sm"
                 onClick={() => setShowSettingsModal(false)}
               >
-                বাতিল
+                Cancel
               </Button>
               <Button
                 type="submit"
@@ -736,7 +725,7 @@ export const DashboardPage = () => {
                 isLoading={savingSettings}
                 className="font-bold"
               >
-                সংরক্ষণ করুন
+                Save Settings
               </Button>
             </div>
           </div>
@@ -776,10 +765,10 @@ export const DashboardPage = () => {
         onClose={() => setDeleteTarget(null)}
         onConfirm={confirmDeleteItem}
         loading={deleting}
-        title={deleteTarget?.type === 'income' ? 'আয় মুছে ফেলতে চান?' : 'খরচ মুছে ফেলতে চান?'}
+        title={deleteTarget?.type === 'income' ? 'Delete Income Record?' : 'Delete Expense Record?'}
         message={deleteTarget?.title 
-          ? `আপনি কি নিশ্চিত যে "${deleteTarget.title}" তালিকা থেকে মুছে ফেলতে চান?`
-          : `আপনি কি নিশ্চিত যে এই ${deleteTarget?.type === 'income' ? 'আয়টি' : 'খরচটি'} মুছে ফেলতে চান?`
+          ? `Are you sure you want to delete "${deleteTarget.title}"? This record cannot be recovered.`
+          : `Are you sure you want to delete this ${deleteTarget?.type === 'income' ? 'income' : 'expense'} record?`
         }
       />
     </div>

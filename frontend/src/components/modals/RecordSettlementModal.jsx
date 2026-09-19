@@ -71,16 +71,16 @@ export const RecordSettlementModal = ({
     setError('');
 
     if (!selectedHouseholdId) {
-      setError('অনুগ্রহ করে একটি মেস বা বাসা নির্বাচন করুন।');
+      setError('Please select a household.');
       return;
     }
 
     if (formData.payer === formData.recipient) {
-      setError('টাকা পরিশোধকারী এবং গ্রহণকারী একই ব্যক্তি হতে পারেন না। (Payer and recipient cannot be the same person)');
+      setError('Payer and recipient cannot be the same person.');
       return;
     }
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      setError('অনুগ্রহ করে সঠিক টাকার পরিমাণ লিখুন। (Please provide a valid settlement amount)');
+      setError('Please enter a valid payment amount.');
       return;
     }
 
@@ -93,14 +93,14 @@ export const RecordSettlementModal = ({
       onSuccess?.();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.detail || 'সেটেলমেন্ট রেকর্ড করতে ব্যর্থ হয়েছে।');
+      setError(err.response?.data?.detail || 'Failed to record settlement.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="দেনা-পাওনা পরিশোধ রেকর্ড (Record Settlement)">
+    <Modal isOpen={isOpen} onClose={onClose} title="Record Settlement & Repayment">
       {households.length === 0 ? (
         <div className="p-6 text-center rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 space-y-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
@@ -108,15 +108,15 @@ export const RecordSettlementModal = ({
           </div>
           <div className="space-y-1">
             <h4 className="text-base font-bold text-slate-900 dark:text-white">
-              আপনার এখনও কোনো মেস বা ফ্ল্যাট যুক্ত নেই!
+              No household selected or joined yet!
             </h4>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              দেনা-পাওনা বা টাকা লেনদেনের হিসাব মেটাতে প্রথমে একটি মেস তৈরি করুন এবং রুমমেট যুক্ত করুন।
+              Create a household and invite your roommates to start recording debt settlements.
             </p>
           </div>
           <div className="pt-2 flex justify-center">
             <Button variant="ghost" onClick={onClose}>
-              বন্ধ করুন (Close)
+              Close
             </Button>
           </div>
         </div>
@@ -125,7 +125,7 @@ export const RecordSettlementModal = ({
           {/* Household Selector is ALWAYS accessible */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-              Household / Mess (মেস নির্বাচন)
+              Select Household
             </label>
             <select
               value={selectedHouseholdId}
@@ -145,20 +145,20 @@ export const RecordSettlementModal = ({
               </div>
               <div className="space-y-1">
                 <h4 className="text-base font-bold text-slate-900 dark:text-white">
-                  নির্বাচিত মেসে অন্তত ২ জন সদস্য থাকতে হবে
+                  At least 2 members are required in this household
                 </h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  দেনা-পাওনা পরিশোধ করতে মেসে অন্য রুমমেট থাকা প্রয়োজন। আপনার মেসের ইনভাইট কোড শেয়ার করে রুমমেটদের যুক্ত করুন।
+                  Share your invite code with roommates so they can join and settle balances.
                 </p>
                 {activeHousehold?.invite_code && (
                   <div className="pt-2 font-mono text-sm font-bold text-brand-600 dark:text-brand-400">
-                    মেস ইনভাইট কোড: <span className="bg-brand-100 dark:bg-brand-900/60 px-2 py-1 rounded-lg select-all">{activeHousehold.invite_code}</span>
+                    Household Invite Code: <span className="bg-brand-100 dark:bg-brand-900/60 px-2 py-1 rounded-lg select-all">{activeHousehold.invite_code}</span>
                   </div>
                 )}
               </div>
               <div className="pt-2 flex justify-center">
                 <Button variant="ghost" onClick={onClose}>
-                  বন্ধ করুন (Close)
+                  Close
                 </Button>
               </div>
             </div>
@@ -173,7 +173,7 @@ export const RecordSettlementModal = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                কে টাকা দিয়েছে? (Who Paid?)
+                Payer (Who Paid?)
               </label>
               <select
                 value={formData.payer}
@@ -190,7 +190,7 @@ export const RecordSettlementModal = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                কে টাকা পেয়েছে? (Who Received?)
+                Recipient (Who Received?)
               </label>
               <select
                 value={formData.recipient}
@@ -209,7 +209,7 @@ export const RecordSettlementModal = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                পরিশোধের পরিমাণ (৳ / Amount)
+                Payment Amount (৳)
               </label>
               <input
                 type="number"
@@ -224,7 +224,7 @@ export const RecordSettlementModal = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                পেমেন্ট মেথড (Payment Method)
+                Payment Method
               </label>
               <select
                 value={formData.payment_method}
@@ -235,7 +235,7 @@ export const RecordSettlementModal = ({
                 <option value="Nagad Transfer">Nagad Transfer</option>
                 <option value="Rocket">Rocket</option>
                 <option value="Bank Instant Transfer">Bank Instant Transfer</option>
-                <option value="Cash Handover">Cash Handover (ক্যাশ)</option>
+                <option value="Cash Handover">Cash Handover</option>
                 <option value="Other">Other</option>
               </select>
             </div>
@@ -243,7 +243,7 @@ export const RecordSettlementModal = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-              তারিখ (Date)
+              Date
             </label>
             <input
               type="date"
@@ -256,11 +256,11 @@ export const RecordSettlementModal = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-              নোট / TrxID (Notes / Reference)
+              Notes / TrxID (Optional)
             </label>
             <textarea
               rows="2"
-              placeholder="e.g. বিকাশ ট্রানজেকশন আইডি বা রেফারেন্স নোট..."
+              placeholder="e.g. bKash TrxID or note..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -269,10 +269,10 @@ export const RecordSettlementModal = ({
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <Button variant="ghost" onClick={onClose} type="button">
-              বাতিল (Cancel)
+              Cancel
             </Button>
             <Button variant="primary" type="submit" isLoading={loading}>
-              সেটেলমেন্ট নিশ্চিত করুন
+              Confirm Settlement
             </Button>
           </div>
         </form>

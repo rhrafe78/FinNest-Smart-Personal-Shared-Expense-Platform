@@ -5,10 +5,10 @@ export const ConfirmDeleteModal = ({
   isOpen,
   onClose,
   onConfirm,
-  title = 'মুছে ফেলতে চান?',
-  message = 'আপনি কি নিশ্চিত যে এটি মুছে ফেলতে চান? এই তথ্যটি আর ফিরিয়ে আনা যাবে না।',
-  confirmText = 'হ্যাঁ, মুছে ফেলুন',
-  cancelText = 'বাতিল করুন',
+  title = 'Confirm Deletion',
+  message = 'Are you sure you want to delete this? This action cannot be undone.',
+  confirmText = 'Delete',
+  cancelText = 'Cancel',
   loading = false,
   danger = true,
 }) => {
@@ -73,7 +73,7 @@ export const ConfirmDeleteModal = ({
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>মুছছি...</span>
+                <span>Deleting...</span>
               </>
             ) : (
               <>

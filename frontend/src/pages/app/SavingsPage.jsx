@@ -45,7 +45,7 @@ export const SavingsPage = () => {
       setFundNotes('');
       fetchGoals();
     } catch (err) {
-      alert('তহবিল যোগ করতে সমস্যা হয়েছে।');
+      alert('Failed to deposit funds.');
     } finally {
       setFundingLoading(false);
     }
@@ -59,10 +59,10 @@ export const SavingsPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            সঞ্চয় লক্ষ্য ও টার্গেট
+            Savings Goals & Milestones
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            জরুরি তহবিল, গ্যাজেট বা ভ্রমণের মতো গুরুত্বপূর্ণ লক্ষ্যের জন্য সময়মতো সঞ্চয় করুন।
+            Save for emergency funds, gadgets, travel, and personal milestones.
           </p>
         </div>
 
@@ -73,14 +73,14 @@ export const SavingsPage = () => {
           onClick={() => setShowCreateModal(true)}
           className="text-xs shadow-sm shadow-brand-500/25"
         >
-          + নতুন সঞ্চয় লক্ষ্য
+          + New Savings Goal
         </Button>
       </div>
 
       {loading ? (
         <div className="p-16 text-center text-slate-400 text-xs space-y-3">
           <div className="w-7 h-7 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p>সঞ্চয়ের মাইলফলক লোড হচ্ছে...</p>
+          <p>Loading savings goals...</p>
         </div>
       ) : goals.length === 0 ? (
         <div className="fin-card p-16 text-center space-y-4">
@@ -89,15 +89,15 @@ export const SavingsPage = () => {
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
-              কোনো সঞ্চয় লক্ষ্য তৈরি করা হয়নি
+              No savings goals created yet
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              ভবিষ্যতের জন্য একটি লক্ষ্য নির্ধারণ করে অল্প অল্প করে জমানো শুরু করুন।
+              Set a target amount and build your emergency fund bit by bit.
             </p>
           </div>
           <div className="pt-2">
             <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowCreateModal(true)}>
-              প্রথম লক্ষ্য সেট করুন
+              Set First Goal
             </Button>
           </div>
         </div>
@@ -123,7 +123,7 @@ export const SavingsPage = () => {
                       </h3>
                     </div>
                     <Badge variant={isFinished ? 'success' : 'brand'} className="text-[11px]">
-                      {isFinished ? 'লক্ষ্য পূরণ!' : `${pct}%`}
+                      {isFinished ? 'Goal Reached!' : `${pct}%`}
                     </Badge>
                   </div>
 
@@ -134,7 +134,7 @@ export const SavingsPage = () => {
                         {curr} {parseFloat(g.current_amount).toLocaleString()}
                       </span>
                       <span className="text-slate-400">
-                        টার্গেট {curr} {parseFloat(g.target_amount).toLocaleString()}
+                        Target: {curr} {parseFloat(g.target_amount).toLocaleString()}
                       </span>
                     </div>
                     <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -149,7 +149,7 @@ export const SavingsPage = () => {
                   <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1.5 text-xs">
                     <div className="flex items-center justify-between text-slate-500">
                       <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" /> লক্ষ্য তারিখ:
+                        <Calendar className="w-3.5 h-3.5 text-slate-400" /> Target Date:
                       </span>
                       <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">
                         {g.target_date}
@@ -157,10 +157,10 @@ export const SavingsPage = () => {
                     </div>
                     <div className="flex items-center justify-between text-slate-500">
                       <span className="flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-brand-500" /> প্রতি মাসে জমানো দরকার:
+                        <Sparkles className="w-3.5 h-3.5 text-brand-500" /> Recommended Monthly Saving:
                       </span>
                       <span className="font-bold text-brand-600 dark:text-brand-400 font-mono tabular-nums">
-                        ~{curr} {parseFloat(g.recommended_monthly_saving).toLocaleString()}/মাস
+                        ~{curr} {parseFloat(g.recommended_monthly_saving).toLocaleString()}/mo
                       </span>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export const SavingsPage = () => {
                     icon={DollarSign}
                     onClick={() => setSelectedGoal(g)}
                   >
-                    টাকা যোগ করুন
+                    Deposit Funds
                   </Button>
                 </div>
               </div>
@@ -187,12 +187,12 @@ export const SavingsPage = () => {
       <Modal
         isOpen={Boolean(selectedGoal)}
         onClose={() => setSelectedGoal(null)}
-        title={`"${selectedGoal?.name}" এ টাকা জমা করুন`}
+        title={`Deposit into "${selectedGoal?.name}"`}
       >
         <form onSubmit={handleAddFundsSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              জমার পরিমাণ ({curr})
+              Deposit Amount ({curr})
             </label>
             <input
               type="number"
@@ -201,30 +201,30 @@ export const SavingsPage = () => {
               min="1"
               value={fundAmount}
               onChange={(e) => setFundAmount(e.target.value)}
-              placeholder="যেমন: ১০০০"
+              placeholder="e.g. 1000"
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              মন্তব্য (ঐচ্ছিক)
+              Note (Optional)
             </label>
             <input
               type="text"
               value={fundNotes}
               onChange={(e) => setFundNotes(e.target.value)}
-              placeholder="যেমন: টিউশনির টাকা থেকে সঞ্চয়"
+              placeholder="e.g. Monthly salary savings"
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
             />
           </div>
 
           <div className="flex justify-end gap-2.5 pt-2">
             <Button variant="ghost" size="sm" onClick={() => setSelectedGoal(null)} type="button">
-              বাতিল
+              Cancel
             </Button>
             <Button variant="primary" size="sm" type="submit" isLoading={fundingLoading}>
-              জমা নিশ্চিত করুন
+              Confirm Deposit
             </Button>
           </div>
         </form>

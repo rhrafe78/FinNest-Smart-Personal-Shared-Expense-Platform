@@ -27,27 +27,27 @@ export const LandingPage = () => {
   const [demoAmount, setDemoAmount] = useState(3600);
   const [demoMembers, setDemoMembers] = useState(4);
 
-  const memberNames = ['আপনি (রাফি)', 'তানভীর', 'আরিফ', 'সাকিব', 'ফাহিম', 'ইমরান'];
+  const memberNames = ['You (Host)', 'Tanvir', 'Arif', 'Sakib', 'Fahim', 'Imran'];
   const activeMembers = memberNames.slice(0, demoMembers);
   const perPersonShare = demoAmount > 0 ? (demoAmount / demoMembers) : 0;
   const youReceiveTotal = demoAmount - perPersonShare;
 
   const faqs = [
     {
-      q: 'FinNest কি আমার ব্যক্তিগত খরচ আর মেসের হিসাব আলাদা রাখে?',
-      a: 'হ্যাঁ, সম্পূর্ণ আলাদা। আপনার ব্যক্তিগত স্যালারি ও পকেট খরচ থাকবে ১০০% প্রাইভেট। কেবল মেসের জন্য শেয়ার করা বিলটুকুই মেস সদস্যরা দেখতে পাবে।'
+      q: 'Does FinNest keep my personal expenses separate from shared household costs?',
+      a: 'Yes, 100% separate. Your personal salary, savings, and individual expenses are completely private. Roommates only see bills explicitly added to the shared household ledger.'
     },
     {
-      q: 'মেসে রুমমেটদের মধ্যে খরচ কীভাবে ভাগ হয়?',
-      a: 'সমান ভাগ (Equal Split), মিল বা কাস্টম টাকার ভাগ (Exact Split), এবং রুম শেয়ার অনুযায়ী ভাগ—সব পদ্ধতিই এক ক্লিকে ব্যবহার করা যায়।'
+      q: 'How does expense splitting work between roommates?',
+      a: 'You can split expenses equally with one click, by exact amounts, or by custom room shares. FinNest automatically calculates every member\'s fair contribution.'
     },
     {
-      q: 'স্মার্ট ঋণ নিষ্পত্তি (Debt Simplification) কীভাবে কাজ করে?',
-      a: 'রুমমেটরা একে অপরকে একাধিকবার টাকা না পাঠিয়ে সরাসরি নেট ব্যালেন্স বের করে মাত্র ১টি বা ২টি ট্রান্সফারে পুরো মেসের দেনা-পাওনা ক্লিয়ার করে।'
+      q: 'How does Smart Debt Simplification work?',
+      a: 'Instead of members sending money back and forth multiple times, FinNest computes the net balances and simplifies all debts into the minimum number of direct transfers.'
     },
     {
-      q: 'FinNest কি সম্পূর্ণ ফ্রি?',
-      a: 'হ্যাঁ! ব্যক্তিগত খরচ ট্র্যাকিং এবং মেসের শেয়ার্ড হিসাব পরিচালনা করার সকল মূল ফিচার সম্পূর্ণ ফ্রিতে ব্যবহার করা যায়।'
+      q: 'Is FinNest free to use?',
+      a: 'Yes. Core personal budgeting, household mess management, and debt simplification are completely free for all members.'
     },
   ];
 
@@ -58,37 +58,37 @@ export const LandingPage = () => {
         <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-sm text-xs font-medium text-slate-600 dark:text-slate-400 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-subtle" />
-            <span>স্মার্ট ব্যক্তিগত ওয়ালেট ও মেস ম্যানেজমেন্ট</span>
+            <span>Smart Personal Wallet & Household Mess Platform</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12]">
-            ব্যক্তিগত খরচ আর মেসের খাতা —<br />
+            Personal budgeting & shared expenses —<br />
             <span className="text-brand-600 dark:text-brand-400">
-              সব এক জায়গায়, পরিচ্ছন্ন ও স্বচ্ছ।
+              all in one clean, transparent ledger.
             </span>
           </h1>
 
           <p className="text-base sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
-            মেসের বাজার, রুমমেটদের মিল, ফ্ল্যাট ভাড়া ও বিদ্যুৎ বিলের নির্ভুল হিসাব রাখুন। কোনো ভুল বোঝাবুঝি বা ক্যালকুলেটরের মারপ্যাঁচ ছাড়াই।
+            Track groceries, flat rent, roommate utility bills, and personal monthly savings without sticky notes or complicated mental math.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
             {isAuthenticated ? (
               <Link to="/app/dashboard">
                 <Button variant="primary" size="lg" className="w-full sm:w-auto text-sm font-semibold px-8 py-3.5 shadow-sm shadow-brand-500/20">
-                  ড্যাশবোর্ডে যান <ArrowRight className="w-4 h-4 ml-2" />
+                  Open Dashboard <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/register">
                   <Button variant="primary" size="lg" className="w-full sm:w-auto text-sm font-semibold px-8 py-3.5 shadow-sm shadow-brand-500/20">
-                    ফ্রি অ্যাকাউন্ট খুলুন <ArrowRight className="w-4 h-4 ml-2" />
+                    Get Started Free <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/login">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto text-sm font-semibold px-8 py-3.5">
-                    লগইন করুন
+                    Log in
                   </Button>
                 </Link>
               </>
@@ -96,9 +96,9 @@ export const LandingPage = () => {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 pt-4 text-xs text-slate-500 dark:text-slate-400">
-            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-emerald-500" /> ১০০% প্রাইভেট ও নিরাপদ</span>
-            <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-500" /> তাৎক্ষণিক নিষ্পত্তি</span>
-            <span className="flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-500" /> যেকোনো সংখ্যক রুমমেট</span>
+            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Private & Secure</span>
+            <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-500" /> Instant Settlement</span>
+            <span className="flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-500" /> Unlimited Roommates</span>
           </div>
         </div>
 
@@ -108,14 +108,14 @@ export const LandingPage = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-6">
               <div className="space-y-1">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                  লাইভ হিসাব ভাগ পরীক্ষা করুন
+                  Live Expense Split Calculator
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  টাকার অংক ও সদস্য সংখ্যা পরিবর্তন করে দেখুন কীভাবে হিসাব ক্লিয়ার হয়।
+                  Adjust the bill amount and member count to see balances resolve in real-time.
                 </p>
               </div>
               <Badge variant="brand" className="self-start sm:self-auto text-xs py-1 px-3">
-                ইন্টারেক্টিভ প্রিভিউ
+                Interactive Demo
               </Badge>
             </div>
 
@@ -123,7 +123,7 @@ export const LandingPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  মোট খরচ (৳)
+                  Total Bill Amount (৳)
                 </label>
                 <input
                   type="number"
@@ -151,7 +151,7 @@ export const LandingPage = () => {
 
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  মেস সদস্য সংখ্যা ({demoMembers} জন)
+                  Roommates Count ({demoMembers} people)
                 </label>
                 <div className="flex items-center gap-2">
                   {[2, 3, 4, 5, 6].map((count) => (
@@ -165,11 +165,11 @@ export const LandingPage = () => {
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
                     >
-                      {count} জন
+                      {count}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-slate-400 pt-1">পকেট থেকে টাকা দিয়েছেন: <strong>আপনি (রাফি)</strong></p>
+                <p className="text-xs text-slate-400 pt-1">Paid out-of-pocket by: <strong>You (Host)</strong></p>
               </div>
             </div>
 
@@ -177,25 +177,25 @@ export const LandingPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 space-y-1">
                 <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  প্রতি রুমমেটের ভাগে পড়ে
+                  Each Member\'s Fair Share
                 </div>
                 <div className="text-3xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
                   ৳{perPersonShare.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <p className="text-[11px] text-slate-400 pt-1">
-                  মোট ৳{demoAmount.toLocaleString()} সমান {demoMembers} ভাগে ভাগ
+                  Total ৳{demoAmount.toLocaleString()} split equally among {demoMembers} people
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 space-y-1">
                 <div className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
-                  মেস থেকে আপনি ফেরত পাবেন
+                  You Receive Back from Group
                 </div>
                 <div className="text-3xl font-bold font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
                   +৳{youReceiveTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <p className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 pt-1">
-                  বাকি {demoMembers - 1} জন সদস্য প্রত্যেকে আপনাকে ৳{perPersonShare.toFixed(0)} দেবেন
+                  Remaining {demoMembers - 1} members owe you ৳{perPersonShare.toFixed(0)} each
                 </p>
               </div>
             </div>
@@ -207,13 +207,13 @@ export const LandingPage = () => {
       <section className="max-w-5xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
           <span className="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
-            বাস্তব জীবনের হিসাব
+            Real-World Financial Tools
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-            সব ধরনের আর্থিক হিসাবের এক সহজ ঠিকানা
+            Designed for modern living and roommates
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            ব্যাচেলর মেস, রুমমেট কিংবা নিজের ব্যক্তিগত পকেট খরচের নির্ভরযোগ্য সঙ্গী
+            Everything you need for bachelor mess management and personal wallet tracking.
           </p>
         </div>
 
@@ -225,10 +225,10 @@ export const LandingPage = () => {
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                মেস ও রুমমেট হিসাব
+                Roommate & Mess Ledger
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                ফ্ল্যাট ভাড়া, বুয়ার বেতন, ওয়াই-ফাই ও কাঁচাবাজারের খরচ নিয়ে মাস শেষে আর কোনো তর্ক বা ভুল বোঝাবুঝি থাকবে না।
+                Rent, utilities, groceries, and maid expenses split fairly. Zero month-end disputes or missing receipts.
               </p>
             </div>
           </div>
@@ -240,10 +240,10 @@ export const LandingPage = () => {
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                ব্যক্তিগত মাসিক বাজেট
+                Personal Budgeting
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                মাস শেষে টাকা কোথায় গেল তা আর ভাবতে হবে না। বেতন ও দৈনিক খরচের হিসাব চোখের সামনে স্পষ্ট রাখুন।
+                Know exactly where your salary goes. Log daily expenses in seconds and protect your monthly savings goals.
               </p>
             </div>
           </div>
@@ -255,10 +255,10 @@ export const LandingPage = () => {
             </div>
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                স্বয়ংক্রিয় দেনা নিষ্পত্তি
+                Automated Settlement
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                কে কাকে কত টাকা দেবে তা অ্যালগরিদম স্বয়ংক্রিয়ভাবে বের করে মাত্র ১ বা ২টি ট্রান্সফারে মেসের হিসাব ক্লিয়ার করে।
+                Our algorithm minimizes transactions so members can settle all debts with 1 or 2 quick digital transfers.
               </p>
             </div>
           </div>
@@ -269,10 +269,10 @@ export const LandingPage = () => {
       <section className="max-w-3xl mx-auto px-6">
         <div className="text-center space-y-2 mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            সাধারণ কিছু জিজ্ঞাসা
+            Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            FinNest কীভাবে কাজ করে সে সম্পর্কে জেনে নিন
+            Everything you need to know about FinNest
           </p>
         </div>
 
@@ -304,17 +304,17 @@ export const LandingPage = () => {
         <div className="p-8 sm:p-12 rounded-3xl bg-brand-600 text-white shadow-card flex flex-col md:flex-row items-center justify-between gap-6 border border-brand-500/40">
           <div className="space-y-2 text-center md:text-left">
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
-              আজই শুরু করুন পরিচ্ছন্ন আর্থিক হিসাব
+              Start managing your money today
             </h3>
             <p className="text-brand-100 text-xs sm:text-sm max-w-md">
-              কোনো ঝামেলা ছাড়াই আপনার পকেট খরচ ও মেসের খাতা একসাথে নিয়ন্ত্রণ করুন।
+              Take complete control of your wallet and shared expenses with zero hassle.
             </p>
           </div>
 
           <div className="shrink-0">
             <Link to="/register">
               <Button variant="secondary" size="lg" className="bg-white text-brand-700 hover:bg-slate-100 font-bold px-7 py-3 text-xs shadow-sm">
-                ফ্রি অ্যাকাউন্ট তৈরি করুন
+                Create Free Account
               </Button>
             </Link>
           </div>

@@ -66,7 +66,7 @@ export const AnalyticsPage = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      alert('ব্যক্তিগত CSV এক্সপোর্ট করা সম্ভব হয়নি।');
+      alert('Failed to export personal CSV.');
     } finally {
       setExportingPersonal(false);
     }
@@ -87,7 +87,7 @@ export const AnalyticsPage = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      alert('মেস রিপোর্ট ডাউনলোড করা যায়নি।');
+      alert('Failed to download household report.');
     } finally {
       setExportingHousehold(false);
     }
@@ -99,7 +99,7 @@ export const AnalyticsPage = () => {
     return (
       <div className="p-16 text-center text-slate-400 text-xs space-y-3">
         <div className="w-7 h-7 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p>অ্যানালিটিক্স চার্ট লোড হচ্ছে...</p>
+        <p>Loading financial analytics...</p>
       </div>
     );
   }
@@ -110,10 +110,10 @@ export const AnalyticsPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            আর্থিক অ্যানালিটিক্স ও রিপোর্ট
+            Financial Analytics & Reports
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            আপনার মাসিক আয়-ব্যয়ের প্রবাহ ও ক্যাটাগরিভিত্তিক খরচের সম্পূর্ণ ভিজ্যুয়াল বিশ্লেষণ।
+            Visual breakdown of your monthly cash flow, category spending, and savings trends.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ export const AnalyticsPage = () => {
             isLoading={exportingPersonal}
             className="text-xs"
           >
-            ব্যক্তিগত CSV ডাউনলোড
+            Export Personal CSV
           </Button>
           {households.length > 0 && (
             <Button
@@ -137,7 +137,7 @@ export const AnalyticsPage = () => {
               isLoading={exportingHousehold}
               className="text-xs shadow-sm shadow-brand-500/25"
             >
-              মেস রিপোর্ট
+              Household Report
             </Button>
           )}
         </div>
@@ -150,11 +150,11 @@ export const AnalyticsPage = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                মাসিক আয় ও সঞ্চয়ের ট্রেন্ড
+                Monthly Cash Flow & Savings Trend
               </h3>
-              <p className="text-xs text-slate-400">প্রতি মাসে কত আয় এবং কত উদ্বৃত্ত সঞ্চয় হয়েছে</p>
+              <p className="text-xs text-slate-400">Net income vs surplus savings over time</p>
             </div>
-            <Badge variant="brand" className="text-xs">মাসিক হিসাব</Badge>
+            <Badge variant="brand" className="text-xs">Monthly View</Badge>
           </div>
 
           <div className="h-64 w-full pt-4">
@@ -171,8 +171,8 @@ export const AnalyticsPage = () => {
                     fontSize: '12px',
                   }}
                 />
-                <Area type="monotone" dataKey="income" stroke="#10b981" fill="#10b981" fillOpacity={0.15} name="মোট আয়" />
-                <Area type="monotone" dataKey="savings" stroke="#6366f1" fill="#6366f1" fillOpacity={0.15} name="নেট সঞ্চয়" />
+                <Area type="monotone" dataKey="income" stroke="#10b981" fill="#10b981" fillOpacity={0.15} name="Total Income" />
+                <Area type="monotone" dataKey="savings" stroke="#6366f1" fill="#6366f1" fillOpacity={0.15} name="Net Savings" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -182,15 +182,15 @@ export const AnalyticsPage = () => {
         <div className="fin-card p-6 space-y-4">
           <div className="space-y-0.5">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              ক্যাটাগরিভিত্তিক খরচের ভাগ
+              Category Spending Breakdown
             </h3>
-            <p className="text-xs text-slate-400">কোথায় কত শতাংশ টাকা খরচ হয়েছে</p>
+            <p className="text-xs text-slate-400">Percentage of total expenditure per category</p>
           </div>
 
           <div className="space-y-4 pt-2">
             {(data.category_breakdown || []).length === 0 ? (
               <div className="p-8 text-center text-slate-400 text-xs">
-                এখনও কোনো ব্যয়ের রেকর্ড নেই
+                No expense data recorded yet
               </div>
             ) : (
               (data.category_breakdown || []).map((c) => {
@@ -227,10 +227,10 @@ export const AnalyticsPage = () => {
         <div className="fin-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              মেসের সম্পূর্ণ খরচের খতিয়ান এক্সপোর্ট
+              Export Household Expense Statement
             </h3>
             <p className="text-xs text-slate-400">
-              মেসের প্রতিটি বাজার, বিল এবং মেম্বারদের টাকার পূর্ণাঙ্গ স্টেটমেন্ট CSV ফরম্যাটে সেভ করুন।
+              Download a complete CSV audit log of all household purchases, bills, and settlements.
             </p>
           </div>
 
@@ -253,7 +253,7 @@ export const AnalyticsPage = () => {
               isLoading={exportingHousehold}
               className="text-xs shadow-sm shadow-brand-500/25"
             >
-              ডাউনলোড CSV
+              Download CSV
             </Button>
           </div>
         </div>

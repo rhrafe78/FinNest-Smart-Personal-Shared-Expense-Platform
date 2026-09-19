@@ -27,7 +27,7 @@ export const InviteMemberModal = ({ isOpen, onClose, household, onSuccess }) => 
     try {
       // First attempt to add the member directly to the mess
       await api.post(`/households/${household.id}/add-member/`, { identifier: email.trim() });
-      setMsg({ text: `সফলভাবে মেসের নতুন সদস্য হিসেবে যুক্ত করা হয়েছে!`, type: 'success' });
+      setMsg({ text: `Successfully added member to household!`, type: 'success' });
       setEmail('');
       onSuccess?.();
     } catch (err) {
@@ -35,18 +35,18 @@ export const InviteMemberModal = ({ isOpen, onClose, household, onSuccess }) => 
       if (err.response?.status === 404) {
         try {
           await api.post(`/households/${household.id}/invite/`, { email: email.trim() });
-          setMsg({ text: `ইনভাইটেশন রেকর্ড করা হয়েছে। রুমমেট অ্যাকাউন্ট খুললে বা কোড দিলে যুক্ত হয়ে যাবে।`, type: 'success' });
+          setMsg({ text: `Invitation created. Share the code with your roommate.`, type: 'success' });
           setEmail('');
           onSuccess?.();
         } catch (inviteErr) {
           setMsg({
-            text: inviteErr.response?.data?.detail || 'মেম্বার যুক্ত করতে ব্যর্থ হয়েছে।',
+            text: inviteErr.response?.data?.detail || 'Failed to add member.',
             type: 'error',
           });
         }
       } else {
         setMsg({
-          text: err.response?.data?.detail || 'মেম্বার যুক্ত করতে ব্যর্থ হয়েছে।',
+          text: err.response?.data?.detail || 'Failed to add member.',
           type: 'error',
         });
       }
@@ -56,7 +56,7 @@ export const InviteMemberModal = ({ isOpen, onClose, household, onSuccess }) => 
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`মেসে সদস্য যুক্ত করুন (${household?.name || 'Household'})`}>
+    <Modal isOpen={isOpen} onClose={onClose} title={`Invite Member to ${household?.name || 'Household'}`}>
       <div className="space-y-5">
         {/* Invite Code Section */}
         <div>

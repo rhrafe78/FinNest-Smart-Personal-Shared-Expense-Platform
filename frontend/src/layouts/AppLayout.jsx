@@ -63,26 +63,28 @@ export const AppLayout = () => {
 
   const navGroups = [
     {
-      group: 'দৈনন্দিন হিসাব',
+      group: 'Daily Ledger',
       items: [
-        { name: 'ড্যাশবোর্ড ও আজকের হিসাব', shortName: 'ড্যাশবোর্ড', path: '/app/dashboard', icon: LayoutDashboard },
-        { name: 'মেস ও রুমমেট হিসাব', shortName: 'মেস হিসাব', path: '/app/households', icon: Home },
-        { name: 'দৈনিক খরচের খাতা', shortName: 'খরচের খাতা', path: '/app/transactions', icon: Receipt },
+        { name: 'Dashboard', shortName: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard },
+        { name: 'Households & Mess', shortName: 'Households', path: '/app/households', icon: Home },
+        { name: 'Transactions', shortName: 'Transactions', path: '/app/transactions', icon: Receipt },
       ],
     },
     {
-      group: 'প্ল্যানিং ও রিপোর্ট',
+      group: 'Planning & Insights',
       items: [
-        { name: 'মাসিক বাজেট ও সঞ্চয়', shortName: 'বাজেট ও সঞ্চয়', path: '/app/budgets', icon: PiggyBank },
-        { name: 'আয়-ব্যয় রিপোর্ট ও গ্রাফ', shortName: 'রিপোর্ট', path: '/app/analytics', icon: BarChart3 },
-        { name: 'বাজার ফর্দ ও মিল হিসাব', shortName: 'বাজার ও মিল', path: '/app/groceries', icon: ShoppingCart },
+        { name: 'Budgets', shortName: 'Budgets', path: '/app/budgets', icon: PiggyBank },
+        { name: 'Savings Goals', shortName: 'Savings', path: '/app/savings', icon: TrendingUp },
+        { name: 'Recurring Bills', shortName: 'Bills', path: '/app/bills', icon: Receipt },
+        { name: 'Analytics & Reports', shortName: 'Analytics', path: '/app/analytics', icon: BarChart3 },
+        { name: 'Groceries & Meals', shortName: 'Groceries', path: '/app/groceries', icon: ShoppingCart },
       ],
     },
     {
-      group: 'অ্যাকাউন্ট ও সেটিংস',
+      group: 'Account',
       items: [
-        { name: 'নোটিফিকেশন', shortName: 'নোটিফিকেশন', path: '/app/notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
-        { name: 'বেতন ও প্রোফাইল সেটিংস', shortName: 'প্রোফাইল', path: '/app/profile', icon: User },
+        { name: 'Notifications', shortName: 'Notifications', path: '/app/notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
+        { name: 'Profile & Settings', shortName: 'Profile', path: '/app/profile', icon: User },
       ],
     },
   ];
@@ -122,7 +124,7 @@ export const AppLayout = () => {
             icon={Plus}
             onClick={() => setActiveModal('expense')}
           >
-            খরচ লিখুন
+            Add Expense
           </Button>
         </div>
 
@@ -181,7 +183,7 @@ export const AppLayout = () => {
             </div>
             <button
               onClick={logout}
-              title="লগ আউট"
+              title="Log out"
               className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
@@ -198,7 +200,7 @@ export const AppLayout = () => {
             <button
               onClick={() => setSidebarOpen(true)}
               className="p-2 -ml-1 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden shrink-0"
-              title="মেন্যু খুলুন"
+              title="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -219,7 +221,7 @@ export const AppLayout = () => {
               icon={Home}
               onClick={() => setActiveModal('shared_expense')}
             >
-              মেসের খরচ
+              Shared Split
             </Button>
             <Button
               variant="primary"
@@ -228,14 +230,14 @@ export const AppLayout = () => {
               icon={Plus}
               onClick={() => setActiveModal('expense')}
             >
-              খরচ লিখুন
+              Add Expense
             </Button>
 
             {/* Notifications Bell */}
             <Link
               to="/app/notifications"
               className="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
-              title="নোটিফিকেশন"
+              title="Notifications"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
@@ -277,13 +279,13 @@ export const AppLayout = () => {
                     to="/app/profile"
                     className="block px-4 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 font-medium"
                   >
-                    বেতন ও প্রোফাইল সেটিংস
+                    Profile & Settings
                   </Link>
                   <button
                     onClick={logout}
                     className="w-full text-left px-4 py-2 text-xs text-rose-600 dark:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2 font-medium"
                   >
-                    <LogOut className="w-3.5 h-3.5" /> লগ আউট
+                    <LogOut className="w-3.5 h-3.5" /> Log out
                   </button>
                 </div>
               )}
@@ -307,7 +309,7 @@ export const AppLayout = () => {
             }`}
           >
             <LayoutDashboard className="w-5 h-5" />
-            <span className="text-[10px]">হোম</span>
+            <span className="text-[10px]">Home</span>
           </Link>
 
           <Link
@@ -319,14 +321,14 @@ export const AppLayout = () => {
             }`}
           >
             <Home className="w-5 h-5" />
-            <span className="text-[10px]">মেস গ্রুপ</span>
+            <span className="text-[10px]">Households</span>
           </Link>
 
           {/* Center Action Button */}
           <button
             onClick={() => setActiveModal('expense')}
             className="w-11 h-11 rounded-full bg-brand-600 text-white flex items-center justify-center -mt-5 shadow-md hover:bg-brand-700 active:scale-95 transition-all border border-brand-500/30"
-            title="খরচ লিখুন"
+            title="Add Expense"
           >
             <Plus className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -340,7 +342,7 @@ export const AppLayout = () => {
             }`}
           >
             <Receipt className="w-5 h-5" />
-            <span className="text-[10px]">খরচের খাতা</span>
+            <span className="text-[10px]">Ledger</span>
           </Link>
 
           <Link
@@ -352,7 +354,7 @@ export const AppLayout = () => {
             }`}
           >
             <User className="w-5 h-5" />
-            <span className="text-[10px]">প্রোফাইল</span>
+            <span className="text-[10px]">Profile</span>
           </Link>
         </nav>
       </div>

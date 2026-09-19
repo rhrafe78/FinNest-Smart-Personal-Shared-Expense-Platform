@@ -123,7 +123,7 @@ export const HouseholdsPage = () => {
       setJoinCode('');
       fetchHouseholds();
     } catch (err) {
-      setJoinError(err.response?.data?.detail || 'ইনভাইট কোডটি সঠিক নয় বা মেয়াদ শেষ হয়ে গেছে।');
+      setJoinError(err.response?.data?.detail || 'Invalid or expired invite code.');
     } finally {
       setJoinLoading(false);
     }
@@ -161,13 +161,13 @@ export const HouseholdsPage = () => {
 
   const handleDeleteExpense = (exp) => {
     if (!canEditOrDelete(exp)) {
-      alert('আপনি শুধুমাত্র নিজের যুক্ত করা খরচ মুছে ফেলতে পারবেন। অন্যের খরচ ডিলিট করা নিষেধ।');
+      alert('You can only delete expenses that you recorded.');
       return;
     }
     setDeleteModalConfig({
       isOpen: true,
-      title: 'মেসের খরচ মুছে ফেলতে চান?',
-      message: `আপনি কি "${exp.title}" মেসের খরচটি মুছে ফেলতে চান? এটি মুছে ফেললে মেম্বারদের ব্যালেন্স পুনরায় হিসাব হবে।`,
+      title: 'Delete Shared Expense?',
+      message: `Are you sure you want to delete "${exp.title}"? Member balances will be recalculated.`,
       confirmAction: async () => {
         setDeleteModalConfig(prev => ({ ...prev, loading: true }));
         try {
@@ -175,7 +175,7 @@ export const HouseholdsPage = () => {
           setDeleteModalConfig({ isOpen: false, title: '', message: '', confirmAction: null, loading: false });
           fetchHouseholdDetails(activeHouseholdId);
         } catch (err) {
-          alert(err.response?.data?.detail || 'খরচ মুছে ফেলতে সমস্যা হয়েছে।');
+          alert(err.response?.data?.detail || 'Failed to delete expense.');
           setDeleteModalConfig(prev => ({ ...prev, loading: false }));
         }
       },
@@ -186,8 +186,8 @@ export const HouseholdsPage = () => {
   const handleRemoveMember = (m) => {
     setDeleteModalConfig({
       isOpen: true,
-      title: 'মেম্বার রিমুভ করতে চান?',
-      message: `আপনি কি "${m.full_name}" কে মেস থেকে রিমুভ করতে চান?`,
+      title: 'Remove Member?',
+      message: `Are you sure you want to remove "${m.full_name}" from this household?`,
       confirmAction: async () => {
         setDeleteModalConfig(prev => ({ ...prev, loading: true }));
         try {
@@ -196,7 +196,7 @@ export const HouseholdsPage = () => {
           fetchHouseholdDetails(activeHouseholdId);
           fetchHouseholds();
         } catch (err) {
-          alert(err.response?.data?.detail || 'মেম্বার রিমুভ করতে সমস্যা হয়েছে।');
+          alert(err.response?.data?.detail || 'Failed to remove member.');
           setDeleteModalConfig(prev => ({ ...prev, loading: false }));
         }
       },
@@ -217,8 +217,8 @@ export const HouseholdsPage = () => {
     if (!targetHh) return;
     setDeleteModalConfig({
       isOpen: true,
-      title: `"${targetHh.name}" মেসটি মুছে ফেলতে চান?`,
-      message: `আপনি কি নিশ্চিত যে "${targetHh.name}" মেসটি সম্পূর্ণরূপে মুছে ফেলতে চান? মেসের সকল হিসাব, খরচ ও মেম্বার তালিকা চিরতরে মুছে যাবে।`,
+      title: `Delete "${targetHh.name}"?`,
+      message: `Are you sure you want to delete "${targetHh.name}"? All shared expenses, settlements, and member records will be permanently removed.`,
       confirmAction: async () => {
         setDeleteModalConfig(prev => ({ ...prev, loading: true }));
         try {
@@ -228,7 +228,7 @@ export const HouseholdsPage = () => {
           setActiveHousehold(null);
           fetchHouseholds();
         } catch (err) {
-          alert(err.response?.data?.detail || 'মেস মুছে ফেলতে সমস্যা হয়েছে। ওনার ছাড়া অন্য কেউ মেস ডিলিট করতে পারবেন না।');
+          alert(err.response?.data?.detail || 'Failed to delete household. Only the owner can delete it.');
           setDeleteModalConfig(prev => ({ ...prev, loading: false }));
         }
       },
@@ -252,10 +252,10 @@ export const HouseholdsPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            মেস ও শেয়ার্ড হিসাব
+            Households & Roommate Split Hub
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            বাজার, বাসা ভাড়া ও বিল অটোমেটিক ভাগ—কে কত টাকা পাবে বা কাকে কত দিতে হবে।
+            Automated cost splitting for groceries, rent, and utility bills with zero friction.
           </p>
         </div>
 
@@ -266,7 +266,7 @@ export const HouseholdsPage = () => {
             onClick={() => setShowJoinModal(true)}
             className="text-xs"
           >
-            কোড দিয়ে মেসে যোগ দিন
+            Join with Code
           </Button>
           <Button
             variant="secondary"
@@ -275,7 +275,7 @@ export const HouseholdsPage = () => {
             onClick={() => setShowCreateHousehold(true)}
             className="text-xs"
           >
-            নতুন মেস তৈরি
+            New Household
           </Button>
           {activeHousehold && (
             <Button
@@ -285,7 +285,7 @@ export const HouseholdsPage = () => {
               onClick={() => setShowAddExpense(true)}
               className="text-xs shadow-sm shadow-brand-500/25"
             >
-              + মেসের খরচ লিখুন
+              + Add Shared Expense
             </Button>
           )}
         </div>
@@ -315,7 +315,7 @@ export const HouseholdsPage = () => {
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
                   }`}
                 >
-                  {h.member_count} জন
+                  {h.member_count} members
                 </span>
                 <button
                   type="button"
@@ -328,7 +328,7 @@ export const HouseholdsPage = () => {
                       ? 'text-slate-300 hover:text-white dark:text-slate-600 dark:hover:text-slate-900'
                       : 'text-slate-400 hover:text-rose-500'
                   }`}
-                  title={`"${h.name}" মেসটি মুছে ফেলুন`}
+                  title={`Delete "${h.name}"`}
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -351,13 +351,13 @@ export const HouseholdsPage = () => {
                 <Badge variant="brand">{activeHousehold.currency}</Badge>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {activeHousehold.description || 'ব্যাচেলর মেস / শেয়ার্ড বাসা'}
+                {activeHousehold.description || 'Shared Apartment & Household'}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
               <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-xs">
-                <span className="text-slate-400">ইনভাইট কোড:</span>
+                <span className="text-slate-400">Invite Code:</span>
                 <span className="font-bold text-brand-600 dark:text-brand-400 select-all tracking-wider">
                   {activeHousehold.invite_code}
                 </span>
@@ -365,7 +365,7 @@ export const HouseholdsPage = () => {
                   type="button"
                   onClick={() => handleCopyCode(activeHousehold.invite_code)}
                   className="p-1 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded transition-colors"
-                  title="কোড কপি করুন"
+                  title="Copy code"
                 >
                   {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
@@ -378,7 +378,7 @@ export const HouseholdsPage = () => {
                 onClick={() => setShowInviteModal(true)}
                 className="text-xs"
               >
-                + মেম্বার যোগ
+                + Invite Member
               </Button>
             </div>
           </div>
@@ -388,7 +388,7 @@ export const HouseholdsPage = () => {
             {/* Card 1: Personal Balance */}
             <div className="fin-card p-5 space-y-2">
               <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-                <span>আপনার দেনা-পাওনা</span>
+                <span>Your Net Balance</span>
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     myNetNum > 0
@@ -398,7 +398,7 @@ export const HouseholdsPage = () => {
                       : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                   }`}
                 >
-                  {myNetNum > 0 ? 'ফেরত পাবেন' : myNetNum < 0 ? 'দিতে হবে' : 'ক্লিয়ার'}
+                  {myNetNum > 0 ? 'Gets Back' : myNetNum < 0 ? 'Owes' : 'Settled'}
                 </span>
               </div>
               <div
@@ -414,52 +414,52 @@ export const HouseholdsPage = () => {
               </div>
               <p className="text-[11px] text-slate-400">
                 {myNetNum > 0
-                  ? 'আপনি বেশি দিয়েছেন, বাকিরা পরিশোধ করবে'
+                  ? 'You paid more, members owe you'
                   : myNetNum < 0
-                  ? 'মেসের সদস্যদের বকেয়া টাকা দিতে হবে'
-                  : 'কোনো বকেয়া বা পাওনা নেই'}
+                  ? 'You have an outstanding balance to settle'
+                  : 'All settled up with household'}
               </p>
             </div>
 
             {/* Card 2: Total Mess Expense */}
             <div className="fin-card p-5 space-y-2">
               <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-                <span>মেসের মোট খরচ</span>
+                <span>Total Household Expense</span>
                 <Receipt className="w-4 h-4 text-slate-400" />
               </div>
               <div className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white tracking-tight">
                 {curr} {totalMessExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <p className="text-[11px] text-slate-400">
-                মোট {expenses.length}টি বাজার ও বিলের যোগফল
+                Sum of {expenses.length} shared groceries & bills
               </p>
             </div>
 
             {/* Card 3: What You Paid */}
             <div className="fin-card p-5 space-y-2">
               <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-                <span>আপনি পকেট থেকে দিয়েছেন</span>
+                <span>Paid Out of Pocket</span>
                 <CreditCard className="w-4 h-4 text-slate-400" />
               </div>
               <div className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white tracking-tight">
                 {curr} {myPaidNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <p className="text-[11px] text-slate-400">
-                আপনার ন্যায্য ভাগ: {curr} {myOwedNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                Your fair share: {curr} {myOwedNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             {/* Card 4: Per Person Average */}
             <div className="fin-card p-5 space-y-2">
               <div className="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
-                <span>জনপ্রতি গড় খরচ</span>
+                <span>Average Per Person</span>
                 <Users className="w-4 h-4 text-slate-400" />
               </div>
               <div className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white tracking-tight">
                 {curr} {avgPerPerson.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <p className="text-[11px] text-slate-400">
-                {memberCount} জন সদস্যের সমান অংশ
+                Equal share across {memberCount} members
               </p>
             </div>
           </div>
@@ -476,7 +476,7 @@ export const HouseholdsPage = () => {
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
-                মেম্বারদের হিসাব ({balances?.members?.length || 0})
+                Member Balances ({balances?.members?.length || 0})
               </button>
 
               <button
@@ -488,7 +488,7 @@ export const HouseholdsPage = () => {
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
-                <span>দেনা-পাওনা নিষ্পত্তি</span>
+                <span>Debt Settlement</span>
                 {pendingSettlementCount > 0 && (
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 )}
@@ -503,7 +503,7 @@ export const HouseholdsPage = () => {
                     : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
-                মেসের খরচের খাতা ({expenses.length})
+                Expense Ledger ({expenses.length})
               </button>
             </div>
 
@@ -518,7 +518,7 @@ export const HouseholdsPage = () => {
                 }}
                 className="text-xs"
               >
-                সেটেলমেন্ট রেকর্ড
+                Record Settlement
               </Button>
             </div>
           </div>
@@ -529,10 +529,10 @@ export const HouseholdsPage = () => {
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    সদস্য তালিকা ও ব্যালেন্স বিবরণী
+                    Member Directory & Balance Breakdown
                   </h3>
                   <p className="text-xs text-slate-400">
-                    কে কত দিয়েছেন, কার ভাগে কত পড়েছে এবং মোট কার কত দেনা-পাওনা।
+                    Who paid what, individual fair shares, and net owed amounts.
                   </p>
                 </div>
                 <Button
@@ -542,7 +542,7 @@ export const HouseholdsPage = () => {
                   onClick={() => setShowInviteModal(true)}
                   className="text-xs sm:hidden"
                 >
-                  + মেম্বার
+                  + Member
                 </Button>
               </div>
 
@@ -550,14 +550,14 @@ export const HouseholdsPage = () => {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                     <tr>
-                      <th className="py-3 px-4 font-semibold">সদস্য</th>
-                      <th className="py-3 px-4 font-semibold">ভূমিকা</th>
-                      <th className="py-3 px-4 font-semibold text-right">মোট দিয়েছেন</th>
-                      <th className="py-3 px-4 font-semibold text-right">মাথাপিছু ভাগ</th>
-                      <th className="py-3 px-4 font-semibold text-right">পরিশোধিত</th>
-                      <th className="py-3 px-4 font-semibold text-right">নেট ব্যালেন্স</th>
-                      <th className="py-3 px-4 font-semibold text-center">স্ট্যাটাস</th>
-                      <th className="py-3 px-4 font-semibold text-center">অ্যাকশন</th>
+                      <th className="py-3 px-4 font-semibold">Member</th>
+                      <th className="py-3 px-4 font-semibold">Role</th>
+                      <th className="py-3 px-4 font-semibold text-right">Total Paid</th>
+                      <th className="py-3 px-4 font-semibold text-right">Fair Share</th>
+                      <th className="py-3 px-4 font-semibold text-right">Settled</th>
+                      <th className="py-3 px-4 font-semibold text-right">Net Balance</th>
+                      <th className="py-3 px-4 font-semibold text-center">Status</th>
+                      <th className="py-3 px-4 font-semibold text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -579,14 +579,14 @@ export const HouseholdsPage = () => {
                               </div>
                               {m.user_id === user?.id && (
                                 <span className="text-[9px] bg-brand-50 text-brand-600 dark:bg-brand-950/80 px-1.5 py-0.5 rounded font-bold shrink-0">
-                                  আপনি
+                                  You
                                 </span>
                               )}
                             </div>
                           </td>
                           <td className="py-3.5 px-4 text-slate-500">
-                            <span className="text-xs">
-                              {m.role === 'owner' ? 'মেস ওনার' : 'সদস্য'}
+                            <span className="text-xs capitalize">
+                              {m.role === 'owner' ? 'Owner' : 'Member'}
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-right font-mono tabular-nums text-slate-700 dark:text-slate-300">
@@ -605,7 +605,7 @@ export const HouseholdsPage = () => {
                           </td>
                           <td className="py-3.5 px-4 text-center">
                             <Badge variant={isGetsBack ? 'success' : isOwes ? 'danger' : 'neutral'} className="text-[11px]">
-                              {isGetsBack ? `+${curr}${netNum.toFixed(0)} পাবে` : isOwes ? `-${curr}${Math.abs(netNum).toFixed(0)} দেবে` : 'হিসাব ক্লিয়ার'}
+                              {isGetsBack ? `+${curr}${netNum.toFixed(0)} Gets Back` : isOwes ? `-${curr}${Math.abs(netNum).toFixed(0)} Owes` : 'Settled'}
                             </Badge>
                           </td>
                           <td className="py-3.5 px-4 text-center">
@@ -613,7 +613,7 @@ export const HouseholdsPage = () => {
                               <button
                                 onClick={() => handleRemoveMember(m)}
                                 className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors"
-                                title="মেম্বার রিমুভ করুন"
+                                title="Remove member"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -639,24 +639,24 @@ export const HouseholdsPage = () => {
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                        স্বয়ংক্রিয় দেনা-পাওনা নিষ্পত্তি প্ল্যান
+                        Optimized Debt Settlement Plan
                       </h3>
                       <p className="text-xs text-slate-400">
-                        সবার মধ্যে আলাদা করে জটিল হিসাব করার বদলে নিচের লেনদেনগুলো করলেই মেস সম্পূর্ণ ক্লিয়ার হয়ে যাবে।
+                        Direct repayments between members to settle all group debt in the fewest transactions.
                       </p>
                     </div>
                   </div>
-                  <Badge variant="success">অপ্টিমাইজড</Badge>
+                  <Badge variant="success">Optimized</Badge>
                 </div>
 
                 {!simplifiedDebts || simplifiedDebts.payments?.length === 0 ? (
                   <div className="p-12 text-center space-y-2">
                     <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
                     <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                      আলহামদুলিল্লাহ! মেসের কোনো বকেয়া নেই
+                      All Settled Up!
                     </h4>
                     <p className="text-xs text-slate-400">
-                      সকল সদস্যের হিসাব বর্তমানে সম্পূর্ণ সমান ও ক্লিয়ার আছে।
+                      All member balances are balanced. There are no outstanding debts in this household.
                     </p>
                   </div>
                 ) : (
@@ -668,12 +668,12 @@ export const HouseholdsPage = () => {
                       >
                         <div className="flex items-center justify-between text-xs font-semibold">
                           <span className="text-rose-600 dark:text-rose-400">{plan.from_user_name}</span>
-                          <span className="text-slate-400 text-xs font-normal">→ দেবে →</span>
+                          <span className="text-slate-400 text-xs font-normal">→ pays →</span>
                           <span className="text-emerald-600 dark:text-emerald-400">{plan.to_user_name}</span>
                         </div>
 
                         <div className="flex items-baseline justify-between pt-1">
-                          <span className="text-xs text-slate-400">টাকার পরিমাণ</span>
+                          <span className="text-xs text-slate-400">Amount</span>
                           <span className="text-lg font-bold font-mono tabular-nums text-slate-900 dark:text-white">
                             {curr} {parseFloat(plan.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                           </span>
@@ -685,7 +685,7 @@ export const HouseholdsPage = () => {
                           className="w-full text-xs py-1.5"
                           onClick={() => handleOpenSettlementFromSimplification(plan)}
                         >
-                          পরিশোধ রেকর্ড করুন
+                          Record Repayment
                         </Button>
                       </div>
                     ))}
@@ -701,10 +701,10 @@ export const HouseholdsPage = () => {
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    মেসের খরচের খতিয়ান
+                    Shared Expense Ledger
                   </h3>
                   <p className="text-xs text-slate-400">
-                    মেসের সকল বাজার, বিল ও ব্যয়ের রসিদ তালিকা।
+                    Chronological history of all household purchases, utilities, and grocery logs.
                   </p>
                 </div>
                 <Button
@@ -714,7 +714,7 @@ export const HouseholdsPage = () => {
                   onClick={() => setShowAddExpense(true)}
                   className="text-xs shadow-sm shadow-brand-500/25"
                 >
-                  + নতুন খরচ
+                  + Add Expense
                 </Button>
               </div>
 
@@ -722,10 +722,10 @@ export const HouseholdsPage = () => {
                 <div className="p-12 text-center space-y-2">
                   <Receipt className="w-10 h-10 text-slate-400 mx-auto" />
                   <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                    মেসে এখনও কোনো খরচ লেখা হয়নি
+                    No shared expenses recorded yet
                   </h4>
                   <p className="text-xs text-slate-400">
-                    প্রথম খরচের হিসাব লিখতে উপরে <strong>"+ নতুন খরচ"</strong> বাটনে চাপ দিন।
+                    Click <strong>"+ Add Expense"</strong> to log your first shared expense or grocery bill.
                   </p>
                 </div>
               ) : (
@@ -745,7 +745,7 @@ export const HouseholdsPage = () => {
                           </Badge>
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                          <span>পরিশোধকারী: <strong className="text-slate-700 dark:text-slate-300">{exp.paid_by_detail?.full_name || exp.paid_by_detail?.username}</strong></span>
+                          <span>Paid by: <strong className="text-slate-700 dark:text-slate-300">{exp.paid_by_detail?.full_name || exp.paid_by_detail?.username}</strong></span>
                           <span>•</span>
                           <span className="font-mono text-[11px]">{exp.date}</span>
                           <span>•</span>
@@ -773,7 +773,7 @@ export const HouseholdsPage = () => {
                                 type="button"
                                 onClick={() => handleEditExpense(exp)}
                                 className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
-                                title="সম্পাদনা"
+                                title="Edit"
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
                               </button>
@@ -781,7 +781,7 @@ export const HouseholdsPage = () => {
                                 type="button"
                                 onClick={() => handleDeleteExpense(exp)}
                                 className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                                title="মুছে ফেলুন"
+                                title="Delete"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -789,7 +789,7 @@ export const HouseholdsPage = () => {
                           ) : (
                             <span
                               className="p-1.5 text-slate-400 cursor-not-allowed"
-                              title="অন্যের খরচ ডিলিট করা নিষেধ"
+                              title="Only payer or owner can modify"
                             >
                               <Lock className="w-3.5 h-3.5" />
                             </span>
@@ -810,25 +810,25 @@ export const HouseholdsPage = () => {
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
-              আপনি এখনও কোনো মেসে যোগ দেননি
+              No Household Selected
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              আপনার ব্যাচেলর মেস, ছাত্রাবাস বা যৌথ বাসার জন্য একটি মেস তৈরি করুন অথবা ইনভাইট কোড দিয়ে মেসে যোগ দিন।
+              Create a household or join with an invite code to start splitting expenses with your flatmates.
             </p>
           </div>
           <div className="flex justify-center gap-2.5 pt-2">
             <Button variant="outline" size="sm" onClick={() => setShowJoinModal(true)}>
-              কোড দিয়ে যোগ দিন
+              Join with Code
             </Button>
             <Button variant="primary" size="sm" onClick={() => setShowCreateHousehold(true)}>
-              নতুন মেস তৈরি করুন
+              Create Household
             </Button>
           </div>
         </div>
       )}
 
       {/* Join Household Modal */}
-      <Modal isOpen={showJoinModal} onClose={() => setShowJoinModal(false)} title="মেসে যোগ দিন">
+      <Modal isOpen={showJoinModal} onClose={() => setShowJoinModal(false)} title="Join Household">
         <form onSubmit={handleJoinByCode} className="space-y-4">
           {joinError && (
             <div className="p-3 text-xs bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900">
@@ -837,12 +837,12 @@ export const HouseholdsPage = () => {
           )}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              ৮-সংখ্যার ইনভাইট কোড লিখুন
+              Enter 8-Character Invite Code
             </label>
             <input
               type="text"
               required
-              placeholder="যেমন: FINNEST77"
+              placeholder="e.g. FINNEST7"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-center text-lg tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
@@ -851,10 +851,10 @@ export const HouseholdsPage = () => {
 
           <div className="flex justify-end gap-2.5 pt-2">
             <Button variant="ghost" size="sm" onClick={() => setShowJoinModal(false)} type="button">
-              বাতিল
+              Cancel
             </Button>
             <Button variant="primary" size="sm" type="submit" isLoading={joinLoading}>
-              মেসে যোগ দিন
+              Join Household
             </Button>
           </div>
         </form>
