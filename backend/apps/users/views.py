@@ -20,9 +20,9 @@ class RegisterView(APIView):
 
     def post(self, request):
         email = request.data.get('email', '').strip().lower()
-        # If user exists but is not verified yet, update their info and re-issue OTP
+        # If user already exists, update their password & name and issue fresh OTP
         existing_user = User.objects.filter(email__iexact=email).first() if email else None
-        if existing_user and not existing_user.is_verified:
+        if existing_user:
             if request.data.get('password'):
                 try:
                     validate_password_strength(request.data['password'])
