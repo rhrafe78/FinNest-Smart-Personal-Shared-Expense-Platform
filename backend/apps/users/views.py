@@ -38,7 +38,7 @@ class RegisterView(APIView):
                 'user': UserSerializer(user).data,
                 'email': user.email,
                 'is_verified': False,
-                'email_sent': True,
+                'email_sent': otp_info.get('email_sent', False),
                 'message': f'A 6-digit verification code has been sent to your Gmail ({user.email}).'
             }, status=status.HTTP_201_CREATED)
 
@@ -50,7 +50,7 @@ class RegisterView(APIView):
                 'user': UserSerializer(user).data,
                 'email': user.email,
                 'is_verified': False,
-                'email_sent': True,
+                'email_sent': otp_info.get('email_sent', False),
                 'message': f'A 6-digit verification code has been sent to your Gmail ({user.email}).'
             }
             return Response(resp, status=status.HTTP_201_CREATED)
@@ -78,8 +78,8 @@ class SendOTPView(APIView):
                 'message': f'A 6-digit verification code has been sent to your Gmail ({email}).',
                 'email': email,
                 'purpose': purpose,
-                'email_sent': True,
-                'email_error': None,
+                'email_sent': res.get('email_sent', False),
+                'email_error': res.get('email_error'),
             }
             return Response(resp, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
