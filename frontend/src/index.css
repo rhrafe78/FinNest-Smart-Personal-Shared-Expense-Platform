@@ -14,47 +14,116 @@
     border-color: #e2e8f0;
   }
   .dark * {
-    border-color: rgba(51, 65, 85, 0.4);
+    border-color: #1e293b;
   }
 
   body {
-    @apply antialiased text-slate-900 bg-[#f8fafc] dark:bg-[#0a0e17] dark:text-slate-100;
+    @apply antialiased text-slate-800 bg-[#f8fafc] dark:bg-[#090d16] dark:text-slate-100;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Force currency and numbers to use tabular monospaced width */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* Custom sleek scrollbar */
+/* Subtle, polished scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.3);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.5);
+  background: rgba(148, 163, 184, 0.6);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.5);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.7);
 }
 
-/* Glassmorphism helpers */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Human-crafted FinTech Card */
+.fin-card {
+  @apply bg-white dark:bg-[#0f172a] border border-slate-200/90 dark:border-slate-800/80 rounded-2xl transition-all duration-200;
 }
-.dark .glass-card {
-  background: rgba(17, 24, 39, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.fin-card-hover {
+  @apply hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-card hover:-translate-y-0.5;
 }
 
-/* Subtle glow effects */
-.hover-glow {
-  transition: all 0.25s ease-in-out;
+/* Crisp hairline top highlight for dark mode cards */
+.dark .fin-card-highlight {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
-.hover-glow:hover {
-  box-shadow: 0 0 20px -3px rgba(99, 102, 241, 0.35);
-  transform: translateY(-2px);
+
+/* Clean badge pill */
+.fin-pill {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+}
+
+/* Smooth micro-animations for real UI feel */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-delayed {
+  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.animate-fade-in-delayed-2 {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2.5s ease-in-out infinite;
+}
+
+/* Smooth active tap effect */
+.tap-effect {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tap-effect:active {
+  transform: scale(0.97);
 }

@@ -14,28 +14,28 @@ export const PublicLayout = () => {
   const location = useLocation();
 
   const navLinks = [
-    { name: 'Features', path: '/features' },
-    { name: 'How It Works', path: '/how-it-works' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'ফিচারসমূহ', path: '/features' },
+    { name: 'কীভাবে কাজ করে', path: '/how-it-works' },
+    { name: 'প্রাইসিং', path: '/pricing' },
+    { name: 'আমাদের সম্পর্কে', path: '/about' },
+    { name: 'যোগাযোগ', path: '/contact' },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#0a0e17] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white relative">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#090d16] text-slate-800 dark:text-slate-100 selection:bg-brand-600 selection:text-white relative">
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0a0e17]/95">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-slate-800/80 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Logo size="md" />
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-600 dark:text-slate-300">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={`transition-colors hover:text-brand-600 dark:hover:text-brand-400 ${
-                  location.pathname === link.path ? 'text-brand-600 dark:text-brand-400 font-semibold' : ''
+                  location.pathname === link.path ? 'text-brand-600 dark:text-brand-400 font-bold' : ''
                 }`}
               >
                 {link.name}
@@ -44,10 +44,10 @@ export const PublicLayout = () => {
           </nav>
 
           {/* Action CTAs & Theme Toggle */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2.5">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
@@ -55,20 +55,20 @@ export const PublicLayout = () => {
 
             {isAuthenticated ? (
               <Link to="/app/dashboard">
-                <Button variant="primary" size="md">
-                  Go to Dashboard <ArrowRight className="w-4 h-4 ml-1" />
+                <Button variant="primary" size="sm" className="font-semibold text-xs px-4 py-2">
+                  ড্যাশবোর্ডে যান <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="md">
-                    Sign In
+                  <Button variant="ghost" size="sm" className="font-semibold text-xs">
+                    লগইন
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button variant="primary" size="md">
-                    Create Free Account
+                  <Button variant="primary" size="sm" className="font-semibold text-xs px-4 py-2">
+                    ফ্রি অ্যাকাউন্ট খুলুন
                   </Button>
                 </Link>
               </>
@@ -94,34 +94,34 @@ export const PublicLayout = () => {
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden px-4 pt-2 pb-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0d131f] space-y-3">
+          <div className="md:hidden px-4 pt-2 pb-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-base font-medium text-slate-700 dark:text-slate-200"
+                className="block py-2 text-sm font-medium text-slate-700 dark:text-slate-200"
               >
                 {link.name}
               </Link>
             ))}
-            <div className="pt-4 flex flex-col gap-2.5">
+            <div className="pt-3 flex flex-col gap-2">
               {isAuthenticated ? (
                 <Link to="/app/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" className="w-full">
-                    Go to Dashboard
+                  <Button variant="primary" className="w-full text-xs font-semibold">
+                    ড্যাশবোর্ডে যান
                   </Button>
                 </Link>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="outline" className="w-full">
-                      Sign In
+                    <Button variant="outline" className="w-full text-xs font-semibold">
+                      লগইন
                     </Button>
                   </Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="primary" className="w-full">
-                      Create Free Account
+                    <Button variant="primary" className="w-full text-xs font-semibold">
+                      ফ্রি অ্যাকাউন্ট খুলুন
                     </Button>
                   </Link>
                 </>

@@ -22,10 +22,11 @@ export default {
           950: '#1e1b4b',
         },
         fintech: {
-          dark: '#0a0e17',
-          card: '#111827',
-          cardHover: '#1f2937',
-          border: '#1f293d',
+          dark: '#090d16',
+          card: '#0f172a',
+          cardHover: '#17223b',
+          border: '#1e293b',
+          borderLight: '#334155',
           emerald: '#10b981',
           rose: '#f43f5e',
           amber: '#f59e0b',
@@ -34,12 +35,14 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
       boxShadow: {
-        'fintech': '0 4px 20px -2px rgba(0, 0, 0, 0.12), 0 2px 6px -1px rgba(0, 0, 0, 0.08)',
-        'glow': '0 0 25px -5px rgba(99, 102, 241, 0.35)',
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.35)',
+        'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
+        'dropdown': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.08)',
+        'modal': '0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
       }
     },
   },

@@ -25,47 +25,67 @@ export const BudgetsPage = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this budget?')) return;
+    if (!window.confirm('আপনি কি নিশ্চিত যে এই বাজেটটি মুছে ফেলতে চান?')) return;
     try {
       await api.delete(`/budgets/${id}/`);
       fetchBudgets();
     } catch (err) {
-      alert('Failed to delete budget.');
+      alert('বাজেট মুছে ফেলতে সমস্যা হয়েছে।');
     }
   };
 
-  const curr = currency === 'BDT' ? '৳' : '$';
+  const curr = currency === 'BDT' ? '৳' : currency === 'USD' ? '$' : '৳';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Monthly Category Budgets
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            মাসিক ক্যাটাগরি বাজেট
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Set spending limits on categories. Get warned proactively before exceeding your plan.
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            নির্দিষ্ট খাতে খরচের সীমা নির্ধারণ করুন এবং অতিরিক্ত খরচের আগেই সতর্কবার্তা পান।
           </p>
         </div>
 
-        <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowAddModal(true)}>
-          Create Budget
+        <Button
+          variant="primary"
+          size="sm"
+          icon={Plus}
+          onClick={() => setShowAddModal(true)}
+          className="text-xs shadow-sm shadow-brand-500/25"
+        >
+          + নতুন বাজেট তৈরি
         </Button>
       </div>
 
       {loading ? (
-        <div className="p-12 text-center text-slate-400 text-sm animate-pulse">
-          Loading active budgets...
+        <div className="p-16 text-center text-slate-400 text-xs space-y-3">
+          <div className="w-7 h-7 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p>বাজেট তথ্য লোড হচ্ছে...</p>
         </div>
       ) : budgets.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] space-y-3">
-          <PiggyBank className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-base font-bold text-slate-700 dark:text-slate-300">No active budgets</h3>
-          <p className="text-xs text-slate-500">Create a budget for Food, Rides, or Entertainment to stay in control.</p>
+        <div className="fin-card p-16 text-center space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+            <PiggyBank className="w-6 h-6 stroke-[1.5]" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+              কোনো সক্রিয় বাজেট পাওয়া যায়নি
+            </h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              খাবার, যাতায়াত বা বিনোদনের মতো গুরুত্বপূর্ণ খাতে খরচের সীমা বেঁধে দিয়ে জমানোর অভ্যাস গড়ে তুলুন।
+            </p>
+          </div>
+          <div className="pt-2">
+            <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowAddModal(true)}>
+              প্রথম বাজেট সেট করুন
+            </Button>
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {budgets.map((b) => {
             const pct = b.usage_percentage;
             const isExceeded = b.status === 'exceeded';
@@ -74,13 +94,7 @@ export const BudgetsPage = () => {
             return (
               <div
                 key={b.id}
-                className={`p-6 rounded-3xl border bg-white dark:bg-[#111827] space-y-5 transition-all shadow-sm ${
-                  isExceeded
-                    ? 'border-rose-400 dark:border-rose-900/60'
-                    : isWarning
-                    ? 'border-amber-400 dark:border-amber-900/60'
-                    : 'border-slate-200 dark:border-slate-800'
-                }`}
+                className="fin-card p-5 sm:p-6 space-y-4 transition-all"
               >
                 {/* Top card bar */}
                 <div className="flex items-start justify-between">
@@ -88,18 +102,19 @@ export const BudgetsPage = () => {
                     <span className="text-xs font-semibold text-slate-400">
                       {b.category_name}
                     </span>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
                       {b.name}
                     </h3>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Badge variant={isExceeded ? 'danger' : isWarning ? 'warning' : 'success'}>
-                      {isExceeded ? 'Exceeded' : isWarning ? 'Near Limit' : 'On Track'}
+                    <Badge variant={isExceeded ? 'danger' : isWarning ? 'warning' : 'success'} className="text-[11px]">
+                      {isExceeded ? 'সীমা অতিক্রম' : isWarning ? 'সীমার কাছাকাছি' : 'নিয়ন্ত্রণে'}
                     </Badge>
                     <button
                       onClick={() => handleDelete(b.id)}
-                      className="p-1 text-slate-400 hover:text-rose-500 rounded"
+                      className="p-1 text-slate-400 hover:text-rose-500 rounded-lg transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                      title="বাজেট মুছুন"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -108,15 +123,15 @@ export const BudgetsPage = () => {
 
                 {/* Progress bar */}
                 <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-600 dark:text-slate-300 font-mono">
-                      {curr} {parseFloat(b.spent_amount).toLocaleString()} spent
+                  <div className="flex justify-between text-xs font-medium">
+                    <span className="text-slate-600 dark:text-slate-400 font-mono tabular-nums">
+                      খরচ হয়েছে {curr} {parseFloat(b.spent_amount).toLocaleString()}
                     </span>
-                    <span className={isExceeded ? 'text-rose-600 font-bold' : isWarning ? 'text-amber-500 font-bold' : 'text-slate-500'}>
-                      {pct}% used
+                    <span className={`font-mono tabular-nums ${isExceeded ? 'text-rose-600 font-bold' : isWarning ? 'text-amber-500 font-bold' : 'text-slate-500'}`}>
+                      {pct}% ব্যবহৃত
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
                         isExceeded ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-brand-500'
@@ -127,16 +142,16 @@ export const BudgetsPage = () => {
                 </div>
 
                 {/* Card summary stats */}
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
                   <div>
-                    <span>Budget Limit: </span>
-                    <span className="font-bold text-slate-900 dark:text-white font-mono">
+                    <span>বাজেট সীমা: </span>
+                    <span className="font-semibold text-slate-900 dark:text-white font-mono tabular-nums">
                       {curr} {parseFloat(b.amount).toLocaleString()}
                     </span>
                   </div>
                   <div>
-                    <span>Remaining: </span>
-                    <span className={`font-bold font-mono ${parseFloat(b.remaining_amount) < 0 ? 'text-rose-600' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                    <span>অবশিষ্ট: </span>
+                    <span className={`font-semibold font-mono tabular-nums ${parseFloat(b.remaining_amount) < 0 ? 'text-rose-600' : 'text-emerald-600 dark:text-emerald-400'}`}>
                       {curr} {parseFloat(b.remaining_amount).toLocaleString()}
                     </span>
                   </div>

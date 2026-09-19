@@ -231,39 +231,54 @@ export const DashboardPage = () => {
   const salaryNum = parseFloat(salary.effective_income || '0');
   const spentPct = salary.spent_pct || 0;
 
+  const [activeTxTab, setActiveTxTab] = useState('all'); // 'all' | 'today'
+
+  const handleQuickExpense = (merchant, defaultAmount) => {
+    setEditExpenseItem({
+      merchant,
+      amount: defaultAmount,
+      date: new Date().toISOString().split('T')[0],
+    });
+    setShowExpenseModal(true);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* 1. Header & Quick Actions Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-brand-900/10 via-indigo-900/10 to-slate-900/5 dark:from-brand-950/40 dark:via-indigo-950/20 dark:to-[#0a0e17] p-5 sm:p-6 rounded-3xl border border-brand-200/50 dark:border-slate-800 shadow-sm">
+    <div className="space-y-8 sm:space-y-10 max-w-5xl mx-auto">
+      {/* 1. Natural, Frameless Header (Spacious & Clean) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1 animate-fade-in">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold mb-1.5">
-            <Calendar className="w-3.5 h-3.5" /> {daily.today_date_formatted || 'Today'}
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium mb-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-subtle" />
+            <span>{daily.today_date_formatted || 'আজকের দিন'}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
             স্বাগতম, {user?.first_name || user?.username || 'ইউজার'}!
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            আজকের খরচ, মাসিক অবশিষ্ট টাকা এবং মেসের ব্যালেন্স এক নজরে
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            আপনার আজকের আর্থিক অবস্থা ও মেসের হিসাব এক নজরে
           </p>
         </div>
 
-        {/* Big, Friendly Quick Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Clean, Tactile Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <Button
             variant="primary"
             size="md"
             icon={Plus}
-            onClick={() => setShowExpenseModal(true)}
-            className="text-xs font-bold shadow-lg shadow-brand-500/25 px-4 py-2.5"
+            onClick={() => {
+              setEditExpenseItem(null);
+              setShowExpenseModal(true);
+            }}
+            className="text-xs font-semibold px-4 py-2.5 shadow-sm"
           >
-            আজকের খরচ লিখুন
+            খরচ লিখুন
           </Button>
           <Button
             variant="outline"
             size="md"
             icon={Home}
             onClick={() => setShowSharedModal(true)}
-            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 border-indigo-300 dark:border-indigo-800 bg-white/50 dark:bg-slate-900/50 px-4 py-2.5"
+            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/30 dark:bg-indigo-950/20 px-4 py-2.5"
           >
             মেসের খরচ
           </Button>
@@ -271,292 +286,365 @@ export const DashboardPage = () => {
             variant="secondary"
             size="sm"
             icon={TrendingUp}
-            onClick={() => setShowIncomeModal(true)}
-            className="text-xs font-bold text-emerald-600 dark:text-emerald-400"
+            onClick={() => {
+              setEditIncomeItem(null);
+              setShowIncomeModal(true);
+            }}
+            className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 py-2.5"
           >
-            আয় লিখুন
+            আয় যোগ
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={Edit3}
+          <button
             onClick={() => setShowSettingsModal(true)}
-            className="text-xs font-semibold text-slate-500"
-            title="স্যালারি ও টার্গেট সেটিংস"
+            className="p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
+            title="মাসিক স্যালারি ও দৈনিক টার্গেট পরিবর্তন"
           >
-            সেটিংস
-          </Button>
+            <Edit3 className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      {/* 2. THREE PRIMARY CORE CARDS - BIG, BOLD, AND EASY */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: Cash in Hand (Remaining Balance) */}
-        <div className={`p-6 rounded-3xl border-2 shadow-sm relative overflow-hidden space-y-3 ${
-          salary.is_overspent
-            ? 'border-rose-500/70 bg-gradient-to-br from-rose-50/80 via-white to-rose-100/50 dark:from-rose-950/40 dark:via-[#111827] dark:to-rose-950/20'
-            : 'border-emerald-500/70 bg-gradient-to-br from-emerald-50/80 via-white to-emerald-100/50 dark:from-emerald-950/40 dark:via-[#111827] dark:to-emerald-950/20'
-        }`}>
+      {/* 2. Hero Cash Balance Card (Generous Whitespace & Calm Elegance) */}
+      <div className={`p-6 sm:p-8 rounded-3xl border bg-white dark:bg-[#0f172a] shadow-subtle hover:shadow-card transition-all duration-200 animate-fade-in-delayed ${
+        salary.is_overspent
+          ? 'border-rose-300 dark:border-rose-900/50'
+          : 'border-slate-200/90 dark:border-slate-800/80'
+      }`}>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            চলতি মাসে হাতে অবশিষ্ট ব্যালেন্স
+          </span>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+            salary.is_overspent
+              ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
+              : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${salary.is_overspent ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+            <span>{salary.is_overspent ? 'বাজেট শেষ / ঘাটতি' : 'ব্যালেন্স নিরাপদ'}</span>
+          </span>
+        </div>
+
+        {/* Big Tabular Number */}
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className="text-xl sm:text-2xl font-medium text-slate-400 dark:text-slate-500">{curr}</span>
+          <span className={`text-3xl sm:text-5xl font-bold tracking-tight font-mono tabular-nums ${
+            salary.is_overspent ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'
+          }`}>
+            {Math.abs(remainingNum).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+
+        {/* Slender Animated Progress Bar */}
+        <div className="mt-6 space-y-2">
+          <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-2 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ease-out ${
+                salary.is_overspent ? 'bg-rose-500' : spentPct > 80 ? 'bg-amber-500' : 'bg-brand-600'
+              }`}
+              style={{ width: `${Math.min(spentPct, 100)}%` }}
+            />
+          </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium pt-1">
+            <span>মাসিক বেতন: <strong className="text-slate-700 dark:text-slate-300 font-mono font-semibold">{curr} {parseFloat(salary.monthly_salary || '0').toLocaleString()}</strong></span>
+            <span>মোট খরচ: <strong className="text-rose-600 dark:text-rose-400 font-mono font-semibold">{curr} {parseFloat(salary.total_spent_this_month || '0').toLocaleString()}</strong> ({spentPct.toFixed(0)}%)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Sleek 1-Tap Quick Logger Chips (Effortless Daily Entry) */}
+      <div className="space-y-2.5 animate-fade-in-delayed">
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
+          <Zap className="w-3.5 h-3.5 text-amber-500" />
+          <span>১-ট্যাপে দ্রুত খরচ এন্ট্রি:</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          {[
+            { label: 'চা ও নাস্তা', amount: '40', icon: '☕' },
+            { label: 'দুপুরের খাবার', amount: '130', icon: '🍛' },
+            { label: 'রিকশা / ভাড়া', amount: '50', icon: '🛺' },
+            { label: 'বাজার খরচ', amount: '350', icon: '🛒' },
+            { label: 'ওষুধ', amount: '120', icon: '💊' },
+          ].map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => handleQuickExpense(preset.label, preset.amount)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-white dark:bg-[#0f172a] text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-800/80 hover:border-brand-300 dark:hover:border-brand-700 hover:text-brand-600 dark:hover:text-brand-400 hover:shadow-subtle hover:-translate-y-0.5 active:scale-95 transition-all duration-150"
+            >
+              <span>{preset.icon}</span>
+              <span>{preset.label}</span>
+              <span className="font-mono font-semibold text-slate-400 dark:text-slate-500">৳{preset.amount}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Two Spacious Companion Cards (Airy 2-Column Grid) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 animate-fade-in-delayed-2">
+        {/* Card A: Today's Spend */}
+        <div className="p-6 sm:p-7 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0f172a] shadow-subtle hover:shadow-card transition-all duration-200 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-              {salary.is_overspent ? '⚠️ অতিরিক্ত খরচ (ঘাটতি)' : '💵 হাতে অবশিষ্ট টাকা (Cash in Hand)'}
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              আজকের দিনের মোট খরচ
             </span>
-            <div className={`p-2 rounded-xl ${salary.is_overspent ? 'bg-rose-500 text-white' : 'bg-emerald-500 text-white'}`}>
-              {salary.is_overspent ? <AlertTriangle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
-            </div>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
+              daily.is_profit
+                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
+            }`}>
+              {daily.is_profit ? 'সীমার মধ্যে আছে' : 'টার্গেট পার'}
+            </span>
           </div>
 
-          <div className={`text-3xl font-black font-mono tracking-tight ${salary.is_overspent ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-            {curr} {Math.abs(remainingNum).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-lg font-medium text-slate-400">{curr}</span>
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight font-mono tabular-nums text-slate-900 dark:text-white">
+              {parseFloat(daily.today_expense || '0').toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </span>
           </div>
 
-          <div className="space-y-1 pt-1 border-t border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-            <span>মূল মাসিক স্যালারি: <strong className="text-slate-700 dark:text-slate-200 font-mono">{curr} {parseFloat(salary.monthly_salary).toLocaleString()}</strong></span>
-            <span>মোট খরচ: <strong className="text-rose-500 font-mono">{curr} {parseFloat(salary.total_spent_this_month).toLocaleString()}</strong></span>
+          <div className="w-full bg-slate-100 dark:bg-slate-800/80 h-2 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ease-out ${
+                daily.is_profit ? 'bg-emerald-500' : 'bg-rose-500'
+              }`}
+              style={{
+                width: `${Math.min(
+                  (parseFloat(daily.today_expense || '0') / (parseFloat(daily.daily_target || '1') || 1)) * 100,
+                  100
+                )}%`,
+              }}
+            />
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs flex items-center justify-between text-slate-500 dark:text-slate-400">
+            <span>দৈনিক বাজেট: <strong className="text-slate-700 dark:text-slate-300 font-mono">{curr} {parseFloat(daily.daily_target || '0').toLocaleString()}</strong></span>
+            <span className={`font-semibold ${daily.is_profit ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+              {daily.is_profit ? `+৳${parseFloat(daily.difference || '0').toFixed(0)} বাকি` : `-৳${parseFloat(daily.difference || '0').toFixed(0)} অতিরিক্ত`}
+            </span>
           </div>
         </div>
 
-        {/* Card 2: Today's Expense vs Target */}
-        <div className="p-6 rounded-3xl border-2 border-brand-500/40 bg-white dark:bg-[#111827] shadow-sm space-y-3">
+        {/* Card B: Shared Mess Status */}
+        <div className="p-6 sm:p-7 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0f172a] shadow-subtle hover:shadow-card transition-all duration-200 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-              📅 আজকের মোট খরচ (Today's Spend)
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              মেস ও রুমমেট হিসাব
             </span>
-            <Badge variant={daily.is_profit ? 'success' : 'danger'} className="text-[10px] font-bold">
-              {daily.is_profit ? '🎉 লাভ / সেভ' : '⚠️ লিমিট পার'}
-            </Badge>
-          </div>
-
-          <div className="text-3xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
-            {curr} {parseFloat(daily.today_expense).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </div>
-
-          <div className="pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px] flex items-center justify-between">
-            <span className="text-slate-400">দৈনিক লিমিট: <strong className="text-indigo-600 dark:text-indigo-400 font-mono">{curr} {parseFloat(daily.daily_target).toLocaleString()}</strong></span>
-            <span className={daily.is_profit ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'}>
-              {daily.is_profit ? `+৳${parseFloat(daily.difference).toFixed(0)} বেঁচেছে` : `-৳${parseFloat(daily.difference).toFixed(0)} বেশি`}
-            </span>
-          </div>
-        </div>
-
-        {/* Card 3: Shared Mess Live Status */}
-        <div className="p-6 rounded-3xl border-2 border-indigo-500/40 bg-gradient-to-br from-indigo-50/50 via-white to-brand-50/30 dark:from-indigo-950/30 dark:via-[#111827] dark:to-slate-900/40 shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-              👥 মেসের বর্তমান হিসাব (Mess Status)
-            </span>
-            <Link to="/app/households" className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
-              মেস হাব <ArrowRight className="w-3 h-3" />
+            <Link to="/app/households" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
+              মেস হাব <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="text-3xl font-black font-mono tracking-tight">
-            {parseFloat(shared.others_owe_you || '0') > 0 ? (
-              <span className="text-emerald-600 dark:text-emerald-400">+{curr} {parseFloat(shared.others_owe_you).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-            ) : parseFloat(shared.you_owe || '0') > 0 ? (
-              <span className="text-rose-600 dark:text-rose-400">-{curr} {parseFloat(shared.you_owe).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-            ) : (
-              <span className="text-slate-700 dark:text-slate-300">৳ 0.00</span>
-            )}
-          </div>
-
-          <div className="pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
-            <span>
-              {parseFloat(shared.others_owe_you || '0') > 0
-                ? '🎉 আপনি মেসের কাছে টাকা পাবেন'
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-lg font-medium text-slate-400">{curr}</span>
+            <span className={`text-2xl sm:text-3xl font-bold tracking-tight font-mono tabular-nums ${
+              parseFloat(shared.others_owe_you || '0') > 0
+                ? 'text-emerald-600 dark:text-emerald-400'
                 : parseFloat(shared.you_owe || '0') > 0
-                ? '⚠️ মেসে আপনার বকেয়া দেনা'
-                : 'সব হিসাব সমান (কোনো দেনা নেই)'}
+                ? 'text-rose-600 dark:text-rose-400'
+                : 'text-slate-800 dark:text-slate-200'
+            }`}>
+              {parseFloat(shared.others_owe_you || '0') > 0
+                ? `+${parseFloat(shared.others_owe_you).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                : parseFloat(shared.you_owe || '0') > 0
+                ? `-${parseFloat(shared.you_owe).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                : '0.00'}
             </span>
-            <span className="font-semibold text-brand-600">{shared.active_households || 0} টি মেস</span>
+          </div>
+
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {parseFloat(shared.others_owe_you || '0') > 0
+              ? '🎉 রুমমেটদের কাছে আপনার টাকা পাওনা আছে'
+              : parseFloat(shared.you_owe || '0') > 0
+              ? '⚠️ মেসের কাছে আপনার বকেয়া দেনা রয়েছে'
+              : 'সব হিসাব পরিষ্কার (কোনো দেনা-পাওনা নেই)'}
+          </p>
+
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 text-xs flex items-center justify-between text-slate-500 dark:text-slate-400">
+            <span>সক্রিয় মেস: <strong className="text-slate-700 dark:text-slate-300">{shared.active_households || 0} টি</strong></span>
+            <span>আসন্ন বিল: <strong className="text-slate-700 dark:text-slate-300">{shared.upcoming_bills || 0} টি</strong></span>
           </div>
         </div>
       </div>
 
-      {/* 3. TODAY'S ITEM-BY-ITEM EXPENSES */}
-      <div className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] space-y-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 font-bold">
-              <ShoppingBag className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                আজকে কি কি খরচ করেছি ({daily.count || 0} টি)
-              </h3>
-              <p className="text-xs text-slate-400">আপনার আজকের খরচের তালিকা (এডিট বা ডিলিট করতে পারবেন)</p>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            icon={Plus}
-            onClick={() => setShowExpenseModal(true)}
-            className="text-xs font-bold"
-          >
-            + নতুন খরচ
-          </Button>
-        </div>
-
-        {daily.expenses_list && daily.expenses_list.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {daily.expenses_list.map((item) => (
-              <div
-                key={item.id}
-                className="p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 flex items-center justify-between hover:border-brand-300 dark:hover:border-slate-700 transition-all shadow-sm"
-              >
-                <div className="min-w-0 pr-2">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                    {item.merchant || item.title || 'খরচ'}
-                  </div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-                    <span className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-medium">
-                      {item.category || 'সাধারণ'}
-                    </span>
-                    <span>{item.date}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-black text-rose-600 dark:text-rose-400 text-sm shrink-0">
-                    -{curr} {parseFloat(item.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </span>
-
-                  <div className="flex items-center gap-0.5 pl-1.5 border-l border-slate-200 dark:border-slate-700">
-                    <button
-                      onClick={() => handleEditExpense(item)}
-                      className="p-1 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded transition-colors"
-                      title="Edit expense"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteItem(item.id, 'expense', item.merchant || item.title)}
-                      className="p-1 text-slate-400 hover:text-rose-500 rounded transition-colors"
-                      title="Delete expense"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="py-8 px-4 rounded-2xl bg-slate-50/50 dark:bg-slate-900/20 border border-dashed border-slate-300 dark:border-slate-800 text-center space-y-2">
-            <CheckCircle2 className="w-7 h-7 mx-auto text-emerald-500" />
-            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              আজকে এখনও কোন খরচ হয়নি! 👏
-            </p>
-            <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
-              কোন কিছু কিনলে বা বাজার করলে উপরে "+ আজকের খরচ লিখুন" বোতামে চাপ দিন।
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* 4. ANALYTICS & CHARTS CALLOUT - Kept clean so the main dashboard is not heavy */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-brand-50/80 via-white to-indigo-50/60 dark:from-brand-950/30 dark:via-[#111827] dark:to-slate-900 border border-brand-200/60 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold shrink-0">
-            <BarChart className="w-5 h-5" />
-          </div>
+      {/* 5. Unified, Clean Activity Feed (No Clutter, Single Calm Ledger) */}
+      <div className="p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#0f172a] shadow-subtle space-y-6 animate-fade-in-delayed-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-4">
           <div>
-            <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-              মাসিক আয়-ব্যয়ের গ্রাফ ও ক্যাটাগরি রিপোর্ট
-            </h4>
-            <p className="text-[11px] text-slate-400">
-              গত ৬ মাসের ট্রেন্ড, বার-চার্ট এবং পাই-চার্ট আলাদা অ্যানালিটিক্স পাতায় সাজানো রয়েছে
-            </p>
-          </div>
-        </div>
-        <Link to="/app/analytics" className="shrink-0">
-          <Button variant="outline" size="sm" className="text-xs font-bold">
-            গ্রাফ ও রিপোর্ট দেখুন →
-          </Button>
-        </Link>
-      </div>
-
-      {/* 7. RECENT TRANSACTIONS TABLE */}
-      <div className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] space-y-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              সাম্প্রতিক লেনদেনের তালিকা (Recent Ledger)
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              লেনদেনের খাতা
             </h3>
-            <p className="text-xs text-slate-500">সর্বশেষ আয় ও ব্যয়ের এন্ট্রি</p>
+            <p className="text-xs text-slate-400 mt-0.5">আপনার সাম্প্রতিক আয় ও খরচের তালিকা</p>
           </div>
-          <Link to="/app/transactions">
-            <span className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">
-              সম্পূর্ণ লেজার দেখুন →
-            </span>
-          </Link>
+
+          {/* Clean Segmented Tab Control */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setActiveTxTab('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTxTab === 'all'
+                  ? 'bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              সব লেনদেন
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTxTab('today')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTxTab === 'today'
+                  ? 'bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              আজকের খরচ ({daily.count || 0})
+            </button>
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-slate-100 dark:border-slate-800 text-slate-400">
-              <tr>
-                <th className="py-2.5 font-semibold">বিবরণ / মার্চেন্ট</th>
-                <th className="py-2.5 font-semibold">ক্যাটাগরি</th>
-                <th className="py-2.5 font-semibold">তারিখ</th>
-                <th className="py-2.5 font-semibold text-right">পরিমাণ</th>
-                <th className="py-2.5 font-semibold text-center">অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {data.recent_transactions && data.recent_transactions.length > 0 ? (
-                data.recent_transactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                      <div className={`p-1.5 rounded-lg ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60' : 'bg-rose-50 text-rose-600 dark:bg-rose-950/60'}`}>
-                        {tx.type === 'income' ? <ArrowDownLeft className="w-3.5 h-3.5" /> : <ArrowUpRight className="w-3.5 h-3.5" />}
-                      </div>
-                      <span className="truncate max-w-[200px]">{tx.title}</span>
-                    </td>
-                    <td className="py-3 text-slate-600 dark:text-slate-400">
-                      {tx.category}
-                    </td>
-                    <td className="py-3 text-slate-500">
-                      {tx.date}
-                    </td>
-                    <td className={`py-3 font-mono font-bold text-right ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                      {tx.type === 'income' ? '+' : '-'}{curr} {parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </td>
-                    <td className="py-3 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <button
-                          onClick={() => handleEditRecent(tx)}
-                          className="p-1 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded transition-colors"
-                          title="Edit transaction"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(tx.id, tx.type, tx.title)}
-                          className="p-1 text-slate-400 hover:text-rose-500 rounded transition-colors"
-                          title="Delete transaction"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-8 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-1.5 text-slate-400">
-                      <Clock className="w-7 h-7 text-slate-300 dark:text-slate-600" />
-                      <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">এখনও কোন সাম্প্রতিক লেনদেনের রেকর্ড নেই</p>
-                      <p className="text-[11px] text-slate-400">উপরে "+ আজকের খরচ লিখুন" বা "+ আয় / স্যালারি যোগ" বোতাম চাপুন।</p>
+        {/* Transaction Rows Feed */}
+        {activeTxTab === 'today' ? (
+          daily.expenses_list && daily.expenses_list.length > 0 ? (
+            <div className="space-y-2">
+              {daily.expenses_list.map((item) => (
+                <div
+                  key={item.id}
+                  className="group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/40 border border-transparent hover:border-slate-200/80 dark:hover:border-slate-800 transition-all duration-150"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                      <ShoppingBag className="w-4 h-4" />
                     </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    <div className="truncate">
+                      <div className="text-sm font-semibold text-slate-800 dark:text-white truncate">
+                        {item.merchant || item.title || 'খরচ'}
+                      </div>
+                      <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                          {item.category || 'সাধারণ'}
+                        </span>
+                        <span>{item.date}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono font-bold text-sm sm:text-base text-rose-600 dark:text-rose-400 tabular-nums">
+                      -{curr} {parseFloat(item.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditExpense(item)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="সম্পাদনা করুন"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteItem(item.id, 'expense', item.merchant || item.title)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 px-4 text-center space-y-2">
+              <CheckCircle2 className="w-7 h-7 mx-auto text-emerald-500" />
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                আজকে এখনও কোনো খরচ করা হয়নি
+              </p>
+              <p className="text-xs text-slate-400">
+                উপরের ১-ট্যাপ চিপস কিংবা "+ খরচ লিখুন" বোতামে চাপ দিয়ে লিখে ফেলুন।
+              </p>
+            </div>
+          )
+        ) : (
+          data.recent_transactions && data.recent_transactions.length > 0 ? (
+            <div className="space-y-2">
+              {data.recent_transactions.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/40 border border-transparent hover:border-slate-200/80 dark:hover:border-slate-800 transition-all duration-150"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      tx.type === 'income'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'
+                        : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'
+                    }`}>
+                      {tx.type === 'income' ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
+                    </div>
+                    <div className="truncate">
+                      <div className="text-sm font-semibold text-slate-800 dark:text-white truncate">
+                        {tx.title}
+                      </div>
+                      <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                          {tx.category}
+                        </span>
+                        <span>{tx.date}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className={`font-mono font-bold text-sm sm:text-base tabular-nums ${
+                      tx.type === 'income'
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-rose-600 dark:text-rose-400'
+                    }`}>
+                      {tx.type === 'income' ? '+' : '-'}{curr} {parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditRecent(tx)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="সম্পাদনা করুন"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteItem(tx.id, tx.type, tx.title)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 px-4 text-center space-y-2 text-slate-400">
+              <Clock className="w-7 h-7 mx-auto text-slate-300 dark:text-slate-600" />
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                এখনও কোনো লেনদেনের রেকর্ড নেই
+              </p>
+              <p className="text-xs text-slate-400">
+                উপরে "+ খরচ লিখুন" বা "+ আয় যোগ" বোতাম চাপুন।
+              </p>
+            </div>
+          )
+        )}
+
+        {/* View All History Link */}
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span>মোট {data.recent_transactions?.length || 0} টি সাম্প্রতিক রেকর্ড</span>
+          <Link
+            to="/app/transactions"
+            className="font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1"
+          >
+            সম্পূর্ণ খরচের খাতা দেখুন <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
