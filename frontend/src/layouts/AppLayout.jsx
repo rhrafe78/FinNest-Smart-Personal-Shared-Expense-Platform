@@ -65,24 +65,24 @@ export const AppLayout = () => {
     {
       group: 'প্রধান মেন্যু (Main)',
       items: [
-        { name: 'ড্যাশবোর্ড ও আজকের হিসাব', path: '/app/dashboard', icon: LayoutDashboard },
-        { name: 'মেস ও রুমমেট হিসাব', path: '/app/households', icon: Home },
-        { name: 'দৈনিক খরচের খাতা (History)', path: '/app/transactions', icon: Receipt },
+        { name: 'ড্যাশবোর্ড ও আজকের হিসাব', shortName: 'ড্যাশবোর্ড', path: '/app/dashboard', icon: LayoutDashboard },
+        { name: 'মেস ও রুমমেট হিসাব', shortName: 'মেস হিসাব', path: '/app/households', icon: Home },
+        { name: 'দৈনিক খরচের খাতা (History)', shortName: 'খরচের খাতা', path: '/app/transactions', icon: Receipt },
       ],
     },
     {
       group: 'অন্যান্য ফিচার (More Tools)',
       items: [
-        { name: 'মাসিক বাজেট ও সঞ্চয়', path: '/app/budgets', icon: PiggyBank },
-        { name: 'আয়-ব্যয় রিপোর্ট ও গ্রাফ', path: '/app/analytics', icon: BarChart3 },
-        { name: 'মেস বাজার লিস্ট ও বিল', path: '/app/groceries', icon: ShoppingCart },
+        { name: 'মাসিক বাজেট ও সঞ্চয়', shortName: 'বাজেট ও সঞ্চয়', path: '/app/budgets', icon: PiggyBank },
+        { name: 'আয়-ব্যয় রিপোর্ট ও গ্রাফ', shortName: 'রিপোর্ট', path: '/app/analytics', icon: BarChart3 },
+        { name: 'মেস বাজার লিস্ট ও বিল', shortName: 'বাজার ও বিল', path: '/app/groceries', icon: ShoppingCart },
       ],
     },
     {
       group: 'সেটিংস ও নোটিফিকেশন',
       items: [
-        { name: 'নোটিফিকেশন', path: '/app/notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
-        { name: 'বেতন ও প্রোফাইল সেটিংস', path: '/app/profile', icon: User },
+        { name: 'নোটিফিকেশন', shortName: 'নোটিফিকেশন', path: '/app/notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null },
+        { name: 'বেতন ও প্রোফাইল সেটিংস', shortName: 'প্রোফাইল', path: '/app/profile', icon: User },
       ],
     },
   ];
@@ -202,38 +202,42 @@ export const AppLayout = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col lg:pl-64 min-w-0">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#0a0e17]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-30 h-16 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-[#0a0e17]/90 backdrop-blur-md px-3.5 sm:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 -ml-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
+              className="p-2 -ml-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden shrink-0"
+              title="Open Navigation Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              {navGroups.flatMap((g) => g.items).find((i) => i.path === location.pathname)?.name || 'FinNest'}
-            </h1>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
+                <span className="sm:hidden">{navGroups.flatMap((g) => g.items).find((i) => i.path === location.pathname)?.shortName || 'FinNest'}</span>
+                <span className="hidden sm:inline">{navGroups.flatMap((g) => g.items).find((i) => i.path === location.pathname)?.name || 'FinNest'}</span>
+              </h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Direct Quick 1-Tap Buttons on Header */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Direct Quick 1-Tap Buttons on Header - Cleanly hidden on small mobile screens */}
             <Button
               variant="outline"
               size="sm"
-              className="hidden sm:inline-flex text-xs font-bold text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800"
+              className="hidden md:inline-flex text-xs font-bold text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800"
               icon={Home}
               onClick={() => setActiveModal('shared_expense')}
             >
-              + মেসের খরচ
+              মেসের খরচ
             </Button>
             <Button
               variant="primary"
               size="sm"
-              className="text-xs font-bold shadow-md shadow-brand-500/20"
+              className="hidden sm:inline-flex text-xs font-bold shadow-md shadow-brand-500/20"
               icon={Plus}
               onClick={() => setActiveModal('expense')}
             >
-              + খরচ লিখুন
+              খরচ লিখুন
             </Button>
 
             {/* Notifications Bell */}
@@ -301,7 +305,7 @@ export const AppLayout = () => {
         </main>
 
         {/* Mobile Bottom Navigation Bar - Super Friendly & Easy */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0d131f]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex items-center justify-around h-16 px-2 shadow-2xl">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0d131f]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex items-center justify-around h-[66px] pb-2 pt-1 px-2 shadow-2xl">
           <Link
             to="/app/dashboard"
             className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors ${

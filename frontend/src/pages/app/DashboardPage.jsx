@@ -256,7 +256,7 @@ export const DashboardPage = () => {
             onClick={() => setShowExpenseModal(true)}
             className="text-xs font-bold shadow-lg shadow-brand-500/25 px-4 py-2.5"
           >
-            + আজকের খরচ লিখুন
+            আজকের খরচ লিখুন
           </Button>
           <Button
             variant="outline"
@@ -265,7 +265,7 @@ export const DashboardPage = () => {
             onClick={() => setShowSharedModal(true)}
             className="text-xs font-bold text-indigo-600 dark:text-indigo-400 border-indigo-300 dark:border-indigo-800 bg-white/50 dark:bg-slate-900/50 px-4 py-2.5"
           >
-            + মেসের খরচ
+            মেসের খরচ
           </Button>
           <Button
             variant="secondary"
@@ -274,7 +274,7 @@ export const DashboardPage = () => {
             onClick={() => setShowIncomeModal(true)}
             className="text-xs font-bold text-emerald-600 dark:text-emerald-400"
           >
-            + আয়
+            আয় লিখুন
           </Button>
           <Button
             variant="ghost"
@@ -284,7 +284,7 @@ export const DashboardPage = () => {
             className="text-xs font-semibold text-slate-500"
             title="স্যালারি ও টার্গেট সেটিংস"
           >
-            ⚙️ সেটিংস
+            সেটিংস
           </Button>
         </div>
       </div>
