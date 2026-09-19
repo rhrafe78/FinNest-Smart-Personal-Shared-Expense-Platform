@@ -82,6 +82,9 @@ class SendOTPSerializer(serializers.Serializer):
         default='register'
     )
 
+    def validate_email(self, value):
+        return value.strip().lower()
+
 class VerifyOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     otp_code = serializers.CharField(required=True, min_length=6, max_length=6)
@@ -89,3 +92,10 @@ class VerifyOTPSerializer(serializers.Serializer):
         choices=['register', 'login', 'reset_password'],
         default='register'
     )
+
+    def validate_email(self, value):
+        return value.strip().lower()
+
+    def validate_otp_code(self, value):
+        return str(value).strip()
+

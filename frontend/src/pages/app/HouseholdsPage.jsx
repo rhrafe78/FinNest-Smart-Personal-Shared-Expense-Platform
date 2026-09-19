@@ -231,10 +231,18 @@ export const HouseholdsPage = () => {
     });
   };
 
-  const curr = activeHousehold?.currency === 'BDT' ? '৳' : '$';
+  const curr = activeHousehold?.currency === 'BDT' ? '৳' : (activeHousehold?.currency || '৳');
+  const totalMessExpense = expenses.reduce((acc, exp) => acc + parseFloat(exp.amount || '0'), 0);
+  const myMemberInfo = balances?.members?.find((m) => m.user_id === user?.id);
+  const myNetNum = myMemberInfo ? parseFloat(myMemberInfo.net_balance || '0') : 0;
+  const myPaidNum = myMemberInfo ? parseFloat(myMemberInfo.total_paid || '0') : 0;
+  const myOwedNum = myMemberInfo ? parseFloat(myMemberInfo.total_owed || '0') : 0;
+  const memberCount = balances?.members?.length || activeHousehold?.member_count || 1;
+  const avgPerPerson = memberCount > 0 ? (totalMessExpense / memberCount) : 0;
 
   return (
     <div className="space-y-6">
+
       {/* Top Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -349,8 +357,116 @@ export const HouseholdsPage = () => {
             </div>
           </div>
 
+          {/* 🌟 ৪টি সহজ হিসাব সারাংশ কার্ড (এক নজরে মেসের দেনা-পাওনা) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            
+            {/* Card 1: Your Personal Balance */}
+            <div className={`p-5 rounded-3xl border-2 transition-all shadow-sm ${
+              myNetNum > 0
+                ? 'border-emerald-400/80 bg-emerald-50/70 dark:border-emerald-800/80 dark:bg-emerald-950/30'
+                : myNetNum < 0
+                ? 'border-rose-400/80 bg-rose-50/70 dark:border-rose-800/80 dark:bg-rose-950/30'
+                : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-[#111827]'
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                  আপনার ব্যক্তিগত দেনা-পাওনা
+                </span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  myNetNum > 0
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'
+                    : myNetNum < 0
+                    ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300'
+                    : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                }`}>
+                  {myNetNum > 0 ? '✓ ফেরত পাবেন' : myNetNum < 0 ? '⚠️ দিতে হবে' : 'ক্লিয়ার'}
+                </span>
+              </div>
+              <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight ${
+                myNetNum > 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : myNetNum < 0
+                  ? 'text-rose-600 dark:text-rose-400'
+                  : 'text-slate-800 dark:text-slate-200'
+              }`}>
+                {myNetNum > 0 ? '+' : ''}{curr} {Math.abs(myNetNum).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-[11px] mt-1.5 font-medium text-slate-600 dark:text-slate-400">
+                {myNetNum > 0
+                  ? '🎉 আপনি বেশি খরচ করেছেন, বাকিরা আপনাকে টাকা দেবে'
+                  : myNetNum < 0
+                  ? '⚠️ খরচের বাকি টাকা মেসের সদস্যদের পরিশোধ করতে হবে'
+                  : '✨ আপনার কোনো বকেয়া বা পাওনা নেই'}
+              </p>
+            </div>
+
+            {/* Card 2: Total Mess Expense */}
+            <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                  মেসের মোট খরচ
+                </span>
+                <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">
+                  <Receipt className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
+                {curr} {totalMessExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-[11px] mt-1.5 text-slate-500 dark:text-slate-400">
+                মোট {expenses.length}টি বাজার ও বিলের যোগফল
+              </p>
+            </div>
+
+            {/* Card 3: What You Paid Out of Pocket */}
+            <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                  আপনি পকেট থেকে দিয়েছেন
+                </span>
+                <div className="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+                  <CreditCard className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
+                {curr} {myPaidNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-[11px] mt-1.5 text-slate-500 dark:text-slate-400">
+                আপনার ভাগের ন্যায্য খরচ: {curr} {myOwedNum.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+
+            {/* Card 4: Per Person Average */}
+            <div className="p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                  জনপ্রতি গড় খরচ
+                </span>
+                <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+                  <Users className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
+                {curr} {avgPerPerson.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-[11px] mt-1.5 text-slate-500 dark:text-slate-400">
+                মেসের মোট {memberCount} জন সদস্যের সমান ভাগ
+              </p>
+            </div>
+
+          </div>
+
+          {/* 💡 SIMPLE MESS GUIDE BANNER */}
+          <div className="p-4 rounded-2xl bg-brand-50/80 dark:bg-brand-950/30 border border-brand-200 dark:border-brand-900/60 flex items-start gap-3 shadow-sm">
+            <span className="text-xl">💡</span>
+            <div className="text-xs text-brand-950 dark:text-brand-200 leading-relaxed">
+              <strong className="font-bold text-brand-900 dark:text-brand-100">মেসের সহজ হিসাবের নিয়ম:</strong> যে সদস্য নিজের পকেট থেকে মেসের বেশি বাজার বা বিল দিয়েছে, সে মেস থেকে টাকা <strong className="text-emerald-700 dark:text-emerald-300">ফেরত পাবে (সবুজ)</strong>। আর যার বাজার/খরচের টাকা তার ভাগের চেয়ে কম পড়েছে, সে অন্যদের টাকা <strong className="text-rose-700 dark:text-rose-300">পরিশোধ করবে (লাল)</strong>।
+            </div>
+          </div>
+
           {/* SMART DEBT SIMPLIFICATION VISUALIZER */}
           {simplifiedDebts && simplifiedDebts.payments?.length > 0 && (
+
             <div className="p-5 rounded-3xl border-2 border-brand-500/80 bg-gradient-to-br from-brand-50/60 via-white to-indigo-50/40 dark:from-brand-950/40 dark:via-[#111827] dark:to-[#0f172a] space-y-3 shadow-md shadow-brand-500/5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-200/60 dark:border-brand-900/60 pb-2.5">
                 <div className="flex items-center gap-2">
@@ -525,31 +641,34 @@ export const HouseholdsPage = () => {
           <div className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827] space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Shared Expenses Log
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>📋 মেসের খরচের খাতা (Expenses Log)</span>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    {expenses.length}টি এন্ট্রি
+                  </span>
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Shared mess expenses, categories, and participant split breakdown
+                  মেসের সকল বাজার, বিল ও খরচের বিস্তারিত খতিয়ান
                 </p>
               </div>
 
-              <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowAddExpense(true)}>
-                Add Expense
+              <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowAddExpense(true)} className="font-bold text-xs shadow-md shadow-brand-500/20">
+                + নতুন খরচ লিখুন
               </Button>
             </div>
 
             {expenses.length === 0 ? (
               <div className="p-8 text-center text-xs text-slate-400">
-                No shared expenses recorded yet. Click "Add Shared Expense" to log your first bill.
+                মেসে এখনও কোনো খরচ লেখা হয়নি। উপরে <strong>"+ নতুন খরচ লিখুন"</strong> বাটনে চাপ দিয়ে প্রথম খরচের হিসাব যুক্ত করুন।
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                     <tr>
-                      <th className="py-3 px-4 font-semibold">খরচের বিবরণ (Title)</th>
+                      <th className="py-3 px-4 font-semibold">খরচের নাম / বিবরণ</th>
                       <th className="py-3 px-4 font-semibold">ক্যাটাগরি</th>
-                      <th className="py-3 px-4 font-semibold">টাকা দিয়েছে (Paid By)</th>
+                      <th className="py-3 px-4 font-semibold">কে টাকা দিয়েছে</th>
                       <th className="py-3 px-4 font-semibold">ভাগ করার নিয়ম</th>
                       <th className="py-3 px-4 font-semibold">তারিখ</th>
                       <th className="py-3 px-4 font-semibold text-right">মোট টাকা</th>
@@ -557,6 +676,7 @@ export const HouseholdsPage = () => {
                       <th className="py-3 px-4 font-semibold text-center">অ্যাকশন</th>
                     </tr>
                   </thead>
+
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     {expenses.map((exp) => (
                       <tr key={exp.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">

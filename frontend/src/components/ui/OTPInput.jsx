@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RotateCw } from 'lucide-react';
+import { RotateCw, CheckCircle2 } from 'lucide-react';
 import { Button } from './Button';
 
 export const OTPInput = ({
@@ -8,6 +8,7 @@ export const OTPInput = ({
   onResend,
   isLoading = false,
   error = '',
+  resendSuccess = false,
 }) => {
   const [digits, setDigits] = useState(Array(length).fill(''));
   const [timeLeft, setTimeLeft] = useState(60);
@@ -47,7 +48,7 @@ export const OTPInput = ({
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Check if full code entered
+    // Auto submit if all 6 digits entered
     if (newDigits.every((d) => d !== '')) {
       onComplete?.(newDigits.join(''));
     }
@@ -56,6 +57,11 @@ export const OTPInput = ({
   const handleKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !digits[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (digits.every((d) => d !== '')) {
+        onComplete?.(digits.join(''));
+      }
     }
   };
 
@@ -80,15 +86,22 @@ export const OTPInput = ({
   };
 
   const handleResendClick = () => {
-    if (timeLeft > 0) return;
+    if (timeLeft > 0 || isLoading) return;
     setTimeLeft(60);
-    setDigits(Array(length).fill(''));
     onResend?.();
     inputRefs.current[0]?.focus();
   };
 
+  const isComplete = digits.every((d) => d !== '');
+
   return (
     <div className="space-y-5">
+      {resendSuccess && (
+        <div className="p-3 text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-900 text-center font-medium flex items-center justify-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+          <span>A fresh verification code has been dispatched to your email!</span>
+        </div>
+      )}
 
       {error && (
         <div className="p-3 text-xs bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900 text-center font-medium">
@@ -120,6 +133,23 @@ export const OTPInput = ({
         ))}
       </div>
 
+      {/* Primary Submit Button */}
+      <Button
+        type="button"
+        variant="primary"
+        size="lg"
+        className="w-full font-bold shadow-md shadow-brand-500/20"
+        onClick={() => {
+          if (isComplete) {
+            onComplete?.(digits.join(''));
+          }
+        }}
+        isLoading={isLoading}
+        disabled={!isComplete || isLoading}
+      >
+        Verify &amp; Continue
+      </Button>
+
       {/* Timer & Resend Button */}
       <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
         <span>
@@ -135,12 +165,12 @@ export const OTPInput = ({
           disabled={timeLeft > 0 || isLoading}
           onClick={handleResendClick}
           className={`font-semibold transition-colors flex items-center gap-1 ${
-            timeLeft > 0
+            timeLeft > 0 || isLoading
               ? 'text-slate-400 cursor-not-allowed'
               : 'text-brand-600 dark:text-brand-400 hover:underline'
           }`}
         >
-          <RotateCw className="w-3 h-3" /> Resend OTP
+          <RotateCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} /> Resend OTP
         </button>
       </div>
     </div>

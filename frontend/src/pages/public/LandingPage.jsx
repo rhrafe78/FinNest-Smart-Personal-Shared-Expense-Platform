@@ -447,6 +447,33 @@ export const LandingPage = () => {
           ))}
         </div>
       </section>
+
+      {/* 7. COMPACT CALL TO ACTION BANNER */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-700 text-white shadow-xl shadow-brand-500/15 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1.5 text-center md:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/15 text-white text-[11px] font-semibold backdrop-blur-sm">
+              <Sparkles className="w-3 h-3 text-amber-300" />
+              <span>Smart Financial Control</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+              Take complete control of your finances today.
+            </h3>
+            <p className="text-brand-100 text-xs sm:text-sm max-w-xl font-normal leading-relaxed">
+              Join thousands of users tracking wealth and sharing mess expenses with zero stress and zero mathematical errors.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 shrink-0">
+            <Link to="/register">
+              <Button variant="secondary" size="md" className="bg-white text-brand-700 hover:bg-slate-100 font-bold px-5 py-2.5 shadow-md text-xs sm:text-sm">
+                Create Your Free Account Now
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
+

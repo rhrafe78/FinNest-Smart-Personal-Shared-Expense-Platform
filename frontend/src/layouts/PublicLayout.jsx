@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, ArrowRight, ShieldCheck, Heart, Sparkles, Mail, Globe } from 'lucide-react';
+import { Sun, Moon, Menu, X, ArrowRight, ShieldCheck, Sparkles, Mail, Globe } from 'lucide-react';
+
 import { Logo } from '../components/ui/Logo';
 import { Button } from '../components/ui/Button';
 import { useTheme } from '../context/ThemeContext';
@@ -257,10 +258,6 @@ export const PublicLayout = () => {
               <span className="font-bold text-slate-800 dark:text-slate-200">&copy; {new Date().getFullYear()} FINNEST Inc.</span>
               <span className="text-slate-300 dark:text-slate-700">&bull;</span>
               <span>All rights reserved.</span>
-              <span className="hidden sm:inline text-slate-300 dark:text-slate-700">&bull;</span>
-              <span className="flex items-center gap-1.5">
-                Crafted with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for modern personal & shared finance.
-              </span>
             </div>
 
             {/* Right: Essential Legal Links & Live Status Pill */}

@@ -28,14 +28,21 @@ export const RegisterPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
     setFormLoading(true);
+    const cleanPayload = {
+      ...formData,
+      first_name: formData.first_name.trim(),
+      last_name: formData.last_name.trim(),
+      email: formData.email.trim().toLowerCase(),
+    };
     try {
-      const res = await api.post('/auth/register/', formData);
-      setRegisteredEmail(res.data.email || formData.email);
+      const res = await api.post('/auth/register/', cleanPayload);
+      setRegisteredEmail(res.data.email || cleanPayload.email);
       setEmailSent(Boolean(res.data.email_sent));
       setStep(2);
     } catch (err) {
@@ -55,8 +62,8 @@ export const RegisterPage = () => {
     setOtpLoading(true);
     try {
       const res = await api.post('/auth/verify-otp/', {
-        email: registeredEmail,
-        otp_code: code,
+        email: registeredEmail.trim().toLowerCase(),
+        otp_code: String(code).trim(),
         purpose: 'register',
       });
 
@@ -76,15 +83,20 @@ export const RegisterPage = () => {
   };
 
   const handleResendOTP = async () => {
+    setOtpError('');
+    setResendSuccess(false);
     try {
       await api.post('/auth/send-otp/', {
-        email: registeredEmail,
+        email: registeredEmail.trim().toLowerCase(),
         purpose: 'register',
       });
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 6000);
     } catch (err) {
-      setOtpError('Failed to resend OTP. Please try again.');
+      setOtpError(err.response?.data?.detail || 'Failed to resend OTP. Please try again.');
     }
   };
+
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
@@ -235,7 +247,9 @@ export const RegisterPage = () => {
               onResend={handleResendOTP}
               isLoading={otpLoading}
               error={otpError}
+              resendSuccess={resendSuccess}
             />
+
 
             <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
               <button

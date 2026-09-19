@@ -25,13 +25,14 @@ export const LoginPage = () => {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email.trim().toLowerCase(), password);
       navigate('/app/dashboard');
     } catch (err) {
       setError(err.response?.data?.detail || 'Invalid email or password.');
@@ -44,9 +45,10 @@ export const LoginPage = () => {
     e.preventDefault();
     setOtpError('');
     setOtpLoading(true);
+    const cleanEmail = otpEmail.trim().toLowerCase();
     try {
       const res = await api.post('/auth/send-otp/', {
-        email: otpEmail,
+        email: cleanEmail,
         purpose: 'login',
       });
       setEmailSent(Boolean(res.data.email_sent));
@@ -61,8 +63,9 @@ export const LoginPage = () => {
   const handleVerifyLoginOTP = async (code) => {
     setOtpError('');
     setOtpLoading(true);
+    const cleanEmail = otpEmail.trim().toLowerCase();
     try {
-      await loginWithOTP(otpEmail, code);
+      await loginWithOTP(cleanEmail, String(code).trim());
       navigate('/app/dashboard');
     } catch (err) {
       setOtpError(err.response?.data?.detail || 'Invalid or expired OTP code.');
@@ -72,15 +75,21 @@ export const LoginPage = () => {
   };
 
   const handleResendLoginOTP = async () => {
+    setOtpError('');
+    setResendSuccess(false);
+    const cleanEmail = otpEmail.trim().toLowerCase();
     try {
       await api.post('/auth/send-otp/', {
-        email: otpEmail,
+        email: cleanEmail,
         purpose: 'login',
       });
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 6000);
     } catch (err) {
-      setOtpError('Failed to resend OTP. Please try again.');
+      setOtpError(err.response?.data?.detail || 'Failed to resend OTP. Please try again.');
     }
   };
+
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
@@ -257,7 +266,9 @@ export const LoginPage = () => {
                     onResend={handleResendLoginOTP}
                     isLoading={otpLoading}
                     error={otpError}
+                    resendSuccess={resendSuccess}
                   />
+
 
                   <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
                     <button

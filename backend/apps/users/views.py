@@ -99,7 +99,8 @@ class VerifyOTPView(APIView):
             # Verification succeeded!
             user = User.objects.filter(email__iexact=email).first()
             if not user:
-                return Response({'detail': 'User record not found.'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'detail': 'No registered account found matching this email. Please complete registration first.'}, status=status.HTTP_404_NOT_FOUND)
+
 
             # Activate account
             if not user.is_verified:
